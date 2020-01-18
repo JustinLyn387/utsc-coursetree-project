@@ -9,7 +9,7 @@ def createConnection():
     connection = None
     # Try connecting to the database
     try:
-        connection = sqlite3.connect("/Users/riceboy/RiceBoy Documents/UTSC Course Tree/UtscCourses.db")
+        connection = sqlite3.connect("UtscCourses.db")
     except Error as e:
         print(e)
     # Return the connection if available

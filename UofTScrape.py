@@ -11,14 +11,9 @@ def ScrapeUTSC(url):
     # Connect to the main page
     response = requests.get(url)
     document = BeautifulSoup(response.text, "html.parser")
-
-    # Database location
-    database = "/Users/riceboy/RiceBoy Documents/UTSC Course Tree/UtscCourses.db"
-    # Create the db connection
-    connection = createConnection(database)
-    # Wipe the data
+    # Create the db connection and wipe the db
+    connection = createConnection()
     wipeData(connection)
-
     # Lists to hold all the values
     base = "https://utsc.calendar.utoronto.ca/list-of-courses"
     courseAlpha = []
@@ -37,7 +32,7 @@ def ScrapeUTSC(url):
         # Connect to the page
         alphaPage = requests.get(urllib.parse.urljoin(base, link.get("href")))
         letterDoc = BeautifulSoup(alphaPage.text, "html.parser")
-        # List to store the subsect IDs
+        # List to store the subset IDs
         subSecIDs = []
 
         # Loop to get all the subsection headers and required values
