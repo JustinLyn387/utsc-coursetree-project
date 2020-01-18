@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c803d8d9-1efe-4b88-a6d8-ec8859f8d68a" name="Default Changelist" comment="Pretty much finished directory stuff moving on to treeview and login">
+      <change afterPath="$PROJECT_DIR$/Server.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/Oops.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/background.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/background1.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/background1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/image2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/image3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/CourseDirectory.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/HomePage.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/InfoPage.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/NavBar.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/SearchDropBar.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/TreeViewGenerator.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/plugins/vuetify.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/Information.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/views/TreeView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vue.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/HelloWorld.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/About.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Courses.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Home.vue" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Single File Component" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>6</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1SzMmghSSGcIRtYaIS5OsrxWcT1" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="editor.config.ad.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c803d8d9-1efe-4b88-a6d8-ec8859f8d68a" name="Default Changelist" comment="" />
+      <created>1572206021211</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1572206021211</updated>
+      <workItem from="1572206022554" duration="902000" />
+      <workItem from="1572212548087" duration="8195000" />
+      <workItem from="1572230545608" duration="1220000" />
+      <workItem from="1572281428582" duration="22345000" />
+      <workItem from="1572313639463" duration="5392000" />
+      <workItem from="1572350496043" duration="12585000" />
+      <workItem from="1572436884470" duration="2354000" />
+      <workItem from="1572444773999" duration="8572000" />
+      <workItem from="1572458623392" duration="11234000" />
+      <workItem from="1572561898459" duration="16000" />
+      <workItem from="1572561946238" duration="90000" />
+      <workItem from="1572562138889" duration="84000" />
+      <workItem from="1572562238644" duration="5354000" />
+      <workItem from="1576776307460" duration="3304000" />
+      <workItem from="1576804996428" duration="44000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Pretty much finished directory stuff moving on to treeview and login" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pretty much finished directory stuff moving on to treeview and login" />
+  </component>
+</project>
