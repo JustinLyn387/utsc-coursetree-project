@@ -13,12 +13,12 @@ If you would like to you can set up a virtual environment for the project, if yo
 ```cmd
 python -m venv venv
 venv\Scripts\activate.bat
-pip install -r ../requirements.txt
+pip install -r ./requirements.txt
 ```
 
 #### MacOS/Linux
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install -r ../requirements.txt
+pip install -r ./requirements.txt
 ```
