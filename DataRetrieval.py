@@ -127,7 +127,7 @@ def courseDirectory():
     mainDir = {}
     subDir = {}
     courses = {}
-    idCounter = 1
+    idCounter = 0
     # Create the db connection
     connection = createConnection()
     # Get the main directory to start
