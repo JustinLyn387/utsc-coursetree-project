@@ -7,23 +7,23 @@
         aspect-ratio="1"
         max-width="50"
         max-height="50"
-      ></v-img>
+      />
       <v-toolbar-title class="headline">
         <span>UTSC</span>
         <span class="font-weight-light"> Course Tree</span>
       </v-toolbar-title>
 
       <v-toolbar-items>
-         <navbar></navbar>
+        <navbar/>
       </v-toolbar-items>
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-toolbar-items>
         <v-btn text>Login</v-btn>
       </v-toolbar-items>
     </v-app-bar>
 
     <v-content>
-      <router-view></router-view>
+      <router-view/>
     </v-content>
 
   </v-app>

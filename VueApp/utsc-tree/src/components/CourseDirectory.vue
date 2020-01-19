@@ -10,21 +10,20 @@
           flat
           clearable
           class="courseSearch"
-        ></v-text-field>
+        />
         <!-- Tree view section with its attributes/qualities  -->
         <v-treeview
-          open-all
           :items=items
           return-object
           hoverable
           dense
           activatable
+          open-all
           open-on-click
           transition
           color="warning"
           rounded
           :search="search"
-          :filter="filter"
           :open.sync="open"
         >
           <!-- This template allows for events on every course so can bring up course info when clicked -->
@@ -35,12 +34,12 @@
             <v-icon
               v-if="item.children"
               v-text="`mdi-${item.id === 1}`"
-            ></v-icon>
+            />
           </template>
         </v-treeview>
       </v-col>
 
-      <v-divider vertical></v-divider>
+      <v-divider vertical/>
 
       <!-- Right column to hld the course information -->
       <v-col class="pa-6" cols="6">
@@ -66,12 +65,10 @@
           </div>
           <!-- If they haven't selected a course output a default message-->
           <div v-else class="emptyInfo">
-            <v-layout>
-              <v-col>
-                <h2>Ooops Nothing to see here <br> {{ courseInfo.name }}</h2>
-                <v-img src="../assets/Oops.png" height="300" width="300"></v-img>
-              </v-col>
-            </v-layout>
+
+            <h2>Ooops Nothing to see here <br> {{ courseInfo.name }}</h2>
+            <img src="../assets/Oops.png" height="300" width="300"/>
+
           </div>
         </template>
       </v-col>
@@ -168,5 +165,6 @@ export default {
   .emptyInfo{
     text-align: center;
     height: 50%;
+    padding-top: 20%;
   }
 </style>

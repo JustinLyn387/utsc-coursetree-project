@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h1>Quick Links & Information</h1>
     <InfoPage></InfoPage>
   </v-container>
 
@@ -17,5 +18,8 @@ export default {
 </script>
 
 <style scoped>
+  h1{
+    text-align: center;
+  }
 
 </style>

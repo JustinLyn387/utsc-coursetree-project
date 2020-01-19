@@ -13,7 +13,7 @@
         </v-layout>
       </v-col>
 
-      <v-divider vertical></v-divider>
+      <v-divider vertical/>
 
       <!-- Right column to display extra information for the courses like prof permission or ORs -->
       <v-col cols="2">

@@ -5,7 +5,7 @@
       <li><router-link exact to="/">Home</router-link></li>
       <li><router-link exact to="/courses">Courses</router-link></li>
       <li><router-link exact to="/treeview">TreeView</router-link></li>
-      <li><router-link exact to="/information">Information</router-link></li>
+      <li><router-link exact to="/information">Quick Links & Info</router-link></li>
     </ul>
   </nav>
 </template>
