@@ -1,5 +1,7 @@
 node_modules/
 .vscode
 venv/
-*.pyc
+*.pic
 .jscramblerrc
+.idea/
+__pycache__/
