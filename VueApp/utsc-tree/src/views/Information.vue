@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container class="infoPage">
     <h1>Quick Links & Information</h1>
-    <InfoPage></InfoPage>
+    <InfoPage/>
   </v-container>
 
 </template>
@@ -20,6 +20,9 @@ export default {
 <style scoped>
   h1{
     text-align: center;
+  }
+  .infoPage{
+    max-width: 96%;
   }
 
 </style>

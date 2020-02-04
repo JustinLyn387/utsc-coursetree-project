@@ -5,11 +5,11 @@
     <!-- Center the text and wrap it if needed -->
     <v-col class="col-container">
       <v-row>
-        <h1 class="heading1">
-          A new way <br> to view UTSC courses <br> without all the tabs!
-        </h1>
+        <h1 class="heading1">A new way</h1>
+        <h1 class="heading1">to view UTSC courses</h1>
+        <h1 class="heading1">without all the tabs!</h1>
       </v-row>
-      <v-row class="spacer"></v-row>
+      <v-row class="spacer"/>
       <v-row>
         <h1 class="heading2">
           Designed by students, for students.
@@ -59,6 +59,7 @@ export default {
     text-align: center;
     width: 100%;
     font-size: 50px;
+    animation: text 3s 1;
   }
   .heading2{
     padding-right: 3%;
@@ -66,6 +67,11 @@ export default {
     font-size: 20px;
     color: whitesmoke;
     width: 100%;
+  }
+  @keyframes text {
+    0%{
+      margin-bottom: -35px;
+    }
   }
   .spacer{
     height: 30px;

@@ -5,14 +5,16 @@
       <li><router-link exact to="/">Home</router-link></li>
       <li><router-link exact to="/courses">Courses</router-link></li>
       <li><router-link exact to="/treeview">TreeView</router-link></li>
-      <li><router-link exact to="/information">Quick Links & Info</router-link></li>
+      <li><router-link exact to="/information">Links & Info</router-link></li>
     </ul>
   </nav>
 </template>
 
 <script>
+
 export default {
   name: 'NavBar'
+
 }
 </script>
 
@@ -39,7 +41,6 @@ export default {
     padding: 17px 0;
     border-radius: 50px;
   }
-
   .router-link-active{
     border-bottom: 3px solid skyblue;
     border-radius: 2px;

@@ -18,13 +18,16 @@
       </v-toolbar-items>
       <v-spacer/>
       <v-toolbar-items>
-        <v-btn text>Login</v-btn>
+        <v-btn  rounded color="primary" dark v-on:click="openSignIn">Login</v-btn>
+        <a class="settingsIcon" v-on:click="methodTest"> <font-awesome-icon :icon="['fas', 'cogs']" size="2x"/></a>
       </v-toolbar-items>
     </v-app-bar>
 
     <v-content>
       <router-view/>
     </v-content>
+
+    <ModalRoot />
 
   </v-app>
 
@@ -33,11 +36,23 @@
 <script>
 
 import NavBar from '@/components/NavBar.vue'
+import { ModalBus } from './eventBus'
+import Login from '@/components/logRegComponents/LoginRegister.vue'
+import ModalRoot from '@/components/ModalRoot'
 
 export default {
   name: 'App',
   components: {
-    'navbar': NavBar
+    'navbar': NavBar,
+    ModalRoot
+  },
+  methods: {
+    openSignIn () {
+      ModalBus.$emit('open', { component: Login })
+    },
+    methodTest () {
+      console.log('HAHAHAHAHA')
+    }
   },
   data: () => ({
     //
@@ -45,6 +60,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .settingsIcon{
+    align-self: center;
+    padding-left: 18px;
+  }
 </style>

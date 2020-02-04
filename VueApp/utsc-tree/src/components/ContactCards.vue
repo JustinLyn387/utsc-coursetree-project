@@ -29,30 +29,18 @@ export default {
   name: 'ContactCards',
   data: () => ({
     cards: [
-      { title: 'Office of the Registrar',
+      { title: 'Registrars Office',
         subtitle: 'For registration, financial needs, exams, graduation, petitions, TCards, and more.',
-        info: 'Location & Hours: Highland Hall (Main Floor)\n\tM,TU,TH: 9:30-4:30 - W: 10:00-4:00 & 5:00-6:45 - F: 9:30-3:00\nTelephone: (416) 287-7001\nEmail: Done through registrar website',
+        info: 'Location: Highland Hall (Main Floor)\n\nHours:\tMonday: 9:30-4:30\n\t\tTuesday: 9:30-4:30\n\t\tWednesday: 10:00-4:00 & 5:00-6:45\n\t\tThursday: 9:30-4:30\n\t\tFriday: 9:30-3:00\n\nTelephone: (416) 287-7001\nEmail: Done through registrar website',
         website: 'Visit Website',
         link: 'https://www.utsc.utoronto.ca/registrar',
-        flex: 5 },
-      { title: 'Admissions & Recruitment',
-        subtitle: 'For information on programs, applications, housing, finances, campus tours, and more.',
-        info: 'Location & Hours: Highland Hall (Main Floor)\n\tM,TU,TH: 9:30-4:30 - W: 10:00-4:00 & 5:00-6:45 - F: 9:30-3:00\nTelephone: (416) 287-7529\nEmaill: utsc.admissions@utoronto.ca',
+        flex: 6 },
+      { title: 'Admissions',
+        subtitle: 'For information on programs, applications, housing, finances, and campus tours.',
+        info: 'Location: Highland Hall (Main Floor)\n\nHours:\tMonday: 9:30-4:30\n\t\tTuesday: 9:30-4:30\n\t\tWednesday: 10:00-4:00 & 5:00-6:45\n\t\tThursday: 9:30-4:30\n\t\tFriday: 9:30-3:00\n\nTelephone: (416) 287-7529\nEmail: utsc.admissions@utoronto.ca',
         website: 'Visit Website',
         link: 'https://www.utsc.utoronto.ca/admissions',
-        flex: 5 },
-      { title: 'Housing & Residence',
-        subtitle: 'For any information or inquiries related to facilities, housing, and residence.',
-        info: 'Location & Hours: Residence Centre\n\tM-TH: 9:00-7:00 - F: 11:00-5:00\nTelephone: (416) 287-7365\nEmail: residences@utsc.utoronto.ca',
-        website: 'Visit Website',
-        link: 'https://www.utsc.utoronto.ca/~residences',
-        flex: 5 },
-      { title: 'IITS Services',
-        subtitle: 'IITS provides computing support and voice services to students, faculty and staff through the IITS Service Desk.',
-        info: 'Location & Hours: BV487, Library, IC35\n\t*Hours vary per location. Guaranteed across all: M-F: 9:00-5:00\nTelephone: (416) 287-7618\nEmail: student-helpdesk@utsc.utoronto.ca',
-        website: 'Visit Website',
-        link: 'https://webapps.utsc.utoronto.ca/ccweb',
-        flex: 5 }
+        flex: 6 }
     ]
   })
 }
