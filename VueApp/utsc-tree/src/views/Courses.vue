@@ -1,5 +1,5 @@
 <template>
-  <div class="courses">
+  <div>
     <h1>Course Directory</h1>
     <CourseDirectory> </CourseDirectory>
   </div>
@@ -19,12 +19,16 @@ export default {
 </script>
 
 <style scoped>
+  /*
   h1{
     padding-left: 50%;
     padding-top: 15px;
     margin-left: -125px;
   }
-  .courses{
-    height: 93.5vh;
+   */
+  h1{
+    padding-top: 15px;
+    padding-left: 20px;
   }
+
 </style>

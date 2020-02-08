@@ -2,75 +2,94 @@
   <!-- Container to hold the directory and course information -->
   <v-container class="container">
     <v-row >
-      <v-col class="dirSide">
-        <v-text-field
-          v-model="search"
-          label="Search for a course ..."
-          hint="Ex. 'CSCA08H3' or 'Elementary Musicianship I'"
-          flat
-          clearable
-          class="courseSearch"
-        />
+      <v-col class="leftColumn">
+        <v-row class="courseSearch">
+          <v-autocomplete :items="courses" v-model="selectedCourse" label="Search for a course ..."
+                          clearable hint="Ex. 'CSCA08H3' or 'Elementary Musicianship I'" flat color="warning">
+          </v-autocomplete>
+        </v-row>
+        <v-row class="subCourseSearch">
+          <v-text-field v-model="search" label="Filter sub directory courses ..." hint="Ex. 'CSCA08H3' or 'Elementary Musicianship I'"
+            flat clearable class="courseSearch" color="purple"
+          />
+        </v-row>
+        <!-- Button grid to hold the directory letters -->
+        <v-row>
+          <v-btn class="dirButtons" color="primary" x-large icon
+                 v-for="dir in topDirectory1" v-bind:key="dir.letter"
+                 @click="selectedSubDir(dir.letter)">{{ dir.letter }}</v-btn>
+        </v-row>
+        <v-row>
+          <v-btn class="dirButtons" color="primary" x-large icon
+                 v-for="dir in topDirectory2" v-bind:key="dir.letter"
+                 @click="selectedSubDir(dir.letter)">{{ dir.letter }}</v-btn>
+        </v-row>
         <!-- Tree view section with its attributes/qualities  -->
-        <v-treeview
-          :items=items
-          return-object
-          hoverable
-          dense
-          activatable
-          open-all
-          open-on-click
-          transition
-          color="warning"
-          rounded
-          :search="search"
-          :open.sync="open"
-        >
-          <!-- This template allows for events on every course so can bring up course info when clicked -->
-          <template slot="label" slot-scope="{ item }">
-            <a @click="getCourseInfo(item)">{{ item.name }}</a>
-          </template>
-          <template v-slot:prepend="{ item }">
-            <v-icon
-              v-if="item.children"
-              v-text="`mdi-${item.id === 1}`"
-            />
-          </template>
-        </v-treeview>
+        <v-row class="dirSide">
+          <div class="listScroll">
+            <v-treeview
+              :items=selectedItems
+              return-object
+              hoverable
+              dense
+              activatable
+              open-all
+              open-on-click
+              transition
+              color="warning"
+              rounded
+              :search="search"
+              :open.sync="open"
+            >
+              <!-- This template allows for events on every course so can bring up course info when clicked -->
+              <template slot="label" slot-scope="{ item }">
+                <a @click="getCourseInfo(item)">{{ item.name }}</a>
+              </template>
+              <template v-slot:prepend="{ item }">
+                <v-icon
+                  v-if="item.children"
+                  v-text="`mdi-${item.id === 1}`"
+                />
+              </template>
+            </v-treeview>
+          </div>
+        </v-row>
       </v-col>
 
       <v-divider vertical/>
 
       <!-- Right column to hld the course information -->
-      <v-col class="pa-6" cols="6">
-        <template>
-          <!-- If they've clicked a course display the information -->
-          <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
-            <h1>{{ courseInfo.name }}</h1>
-            <br><br>
-            <h2>Course Information:</h2>
-            {{ courseInfo.desc }}
-            <br><br>
-            <h2>Prerequisites:</h2>
-            {{ courseInfo.pre }}
-            <br><br>
-            <h3>Exclusions:</h3>
-            {{ courseInfo.excl }}
-            <br><br>
-            <h3>Student Limit:</h3>
-            {{ courseInfo.limit }}
-            <br><br>
-            <h3>Breadth Requirement:</h3>
-            {{ courseInfo.breadth }}
-          </div>
-          <!-- If they haven't selected a course output a default message-->
-          <div v-else class="emptyInfo">
+      <v-col>
+        <v-container>
+          <template>
+            <!-- If they've clicked a course display the information -->
+            <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
+              <h1>{{ courseInfo.name }}</h1>
+              <br><br>
+              <h2>Course Information:</h2>
+              {{ courseInfo.desc }}
+              <br><br>
+              <h2>Prerequisites:</h2>
+              {{ courseInfo.pre }}
+              <br><br>
+              <h3>Exclusions:</h3>
+              {{ courseInfo.excl }}
+              <br><br>
+              <h3>Student Limit:</h3>
+              {{ courseInfo.limit }}
+              <br><br>
+              <h3>Breadth Requirement:</h3>
+              {{ courseInfo.breadth }}
+            </div>
+            <!-- If they haven't selected a course output a default message-->
+            <div v-else class="emptyInfo">
 
-            <h2>Ooops Nothing to see here <br> {{ courseInfo.name }}</h2>
-            <img src="../assets/Oops.png" height="300" width="300"/>
+              <h2>Oops nothing to see here <br> {{ courseInfo.name }}</h2>
+              <img src="../assets/Oops.png" height="300" width="300"/>
 
-          </div>
-        </template>
+            </div>
+          </template>
+        </v-container>
       </v-col>
 
     </v-row>
@@ -93,10 +112,46 @@ export default {
       breadth: '' },
     // Treeview course data
     items: [],
+    selectedItems: [],
+    courses: [],
+    selectedCourse: '',
+    selectedCourseObject: { name: 'I like rice' },
     open: [1, 2],
     search: null,
-    caseSensitive: false
+    caseSensitive: false,
+    searching: false,
+    topDirectory1: [
+      { letter: 'A' },
+      { letter: 'B' },
+      { letter: 'C' },
+      { letter: 'D' },
+      { letter: 'E' },
+      { letter: 'F' },
+      { letter: 'G' },
+      { letter: 'H' },
+      { letter: 'I' } ],
+    topDirectory2: [
+      { letter: 'J' },
+      { letter: 'L' },
+      { letter: 'M' },
+      { letter: 'N' },
+      { letter: 'P' },
+      { letter: 'R' },
+      { letter: 'S' },
+      { letter: 'T' },
+      { letter: 'W' } ]
   }),
+  // Watcher so when they select from the autocomplete we can call the function to get the info
+  watch: {
+    selectedCourse: function (newCourse) {
+      // Check so we don't get undefined (happens when they clear the field)
+      if (typeof newCourse !== 'undefined') {
+        // Set the object name and pass it in
+        this.selectedCourseObject.name = newCourse
+        this.getCourseInfo(this.selectedCourseObject)
+      }
+    }
+  },
   // API call upon creation to populate the course directory
   created () {
     axios.get('http://127.0.0.1:5000/DataRetrieval/directory')
@@ -104,6 +159,22 @@ export default {
         // Run a loop to append the data
         for (let section in response.data) {
           this.items.push(response.data[section])
+          // Default the selected options to show A directory
+          if (response.data[section].name === 'A') {
+            this.selectedItems.push.apply(this.selectedItems, response.data[section].children)
+          }
+        }
+      })
+      // Catch any errors
+      .catch(e => {
+        this.errors.push(e)
+      })
+    // API call to get just the courses with no divisions for autocomplete section
+    axios.get('http://127.0.0.1:5000/DataRetrieval/coursesWids')
+      .then(response => {
+        // Run a loop to append the data
+        for (let course in response.data) {
+          this.courses.push(response.data[course].name)
         }
       })
       // Catch any errors
@@ -144,6 +215,17 @@ export default {
             this.errors.push(e)
           })
       }
+    },
+    // Function which will clear and then reload the subdir based on the button they select
+    selectedSubDir: function (course) {
+      this.selectedItems = []
+      this.searching = false
+      // Loop through the course directory until we find the right sub section
+      this.items.forEach((element) => {
+        if (element.name === course) {
+          this.selectedItems.push.apply(this.selectedItems, element.children)
+        }
+      })
     }
   }
 }
@@ -152,19 +234,34 @@ export default {
 
 <style scoped>
   .dirSide{
-    height: 83vh;
+    padding-top: 10px;
+  }
+  .listScroll{
+    height: 56vh;
+    min-width: 95%;
     overflow-y: auto;
   }
   .container{
     max-width: 95%;
+    max-height: inherit;
   }
   .courseSearch{
-    max-width: 90%;
+    max-width: 95%;
   }
-
+  .subCourseSearch{
+    max-width: 100%;
+  }
   .emptyInfo{
     text-align: center;
     height: 50%;
     padding-top: 20%;
   }
+  .dirButtons{
+    position: relative;
+    padding-left: 5%;
+    padding-right: 5%;
+    font-weight: bold;
+    font-size: 20px;
+  }
+
 </style>

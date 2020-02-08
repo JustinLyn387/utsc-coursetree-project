@@ -129,10 +129,10 @@ export default {
   }
   .utscInfo{
     padding-top: 10px;
-    padding-left: 30px;
+    padding-left: 20px;
   }
   .utscList{
-    padding-left: 30px;
+    padding-left: 20px;
     list-style: none;
     padding-bottom: 20px;
   }
@@ -141,8 +141,10 @@ export default {
   }
   .instagramIcon :hover{
     color: skyblue;
+    padding-top: 5px;
   }
   .twitterIcon{
+    padding-left: 20px;
     padding-right: 15px;
     color: #55acee;
   }
