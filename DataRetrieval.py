@@ -192,6 +192,29 @@ def getAllCourses():
     return json.dumps(courses, indent=4, separators=(',', ': '))
 
 
+def getCoursesWIDs():
+    """
+    This method will return a list of all the courses with ids for directory page search
+    """
+    # Create the db connection
+    connection = createConnection()
+    # Get the list of all the courses
+    directory = getDirectory(connection, 2, "")
+    # Create the list of dictionaries with the courses
+    courses = []
+    index = 0
+    for course in directory:
+        code = re.findall(r'[A-Z]{4}[0-9]{2}[A-Z][0-9]', str(course))
+        item = {"id": index, "name": course[0]}
+        courses.append(item)
+        index += 1
+
+    # End the connection
+    endConnection(connection)
+
+    return json.dumps(courses, indent=4, separators=(',', ': '))
+
+
 def test():
     """
     This function is designed to look through the database and find all the prereqs for the desired course

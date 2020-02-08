@@ -111,6 +111,8 @@ def getDirectory(connection, modifier, param):
         cur.execute('''SELECT ID, Sections FROM MainDirectory''')
     elif modifier == 1:
         cur.execute('''SELECT ID, SubSections FROM SubDirectory WHERE MainID=? ''', (param, ))
+    elif modifier == 123:
+        cur.execute('''SELECT ID, SubSections FROM SubDirectory ''')
     elif modifier == 2:
         cur.execute('''SELECT Name FROM CourseDirectory''')
     else:

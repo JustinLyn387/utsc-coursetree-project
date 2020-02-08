@@ -6,7 +6,6 @@
          @click="$emit('onClose')">
 
       <div class="modal-dialog" :class="{open: isOpen}" @click.stop>
-        <div class="modal-title" v-if="title">{{ title }}</div>
         <div class="modal-body">
           <slot />
         </div>
@@ -48,11 +47,12 @@ export default {
     align-items: center
   }
   .modal-dialog {
-    width: 30rem;
+    width: 25rem;
+    height: 32rem;
     background: rgb(255, 255, 255);
     padding: 1.5rem 2rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    border-radius: 0.3rem;
+    border-radius: 0.7rem;
     transition: 0.5s;
   }
   .modal-title {
