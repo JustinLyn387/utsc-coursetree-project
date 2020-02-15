@@ -2,7 +2,6 @@
   <!-- Nav bar that contains a list of the router links -->
   <nav>
     <ul>
-      <li><router-link exact to="/">Home</router-link></li>
       <li><router-link exact to="/courses">Courses</router-link></li>
       <li><router-link exact to="/treeview">TreeView</router-link></li>
       <li><router-link exact to="/information">Links & Info</router-link></li>
@@ -27,13 +26,13 @@ export default {
   li{
     display: inline-block;
     margin: 0 10px;
-    color: black;
+    color: cornflowerblue;
+    font-weight: bold;
   }
   a{
-    color: black;
     text-decoration: none;
     padding: 6px 8px;
-    font-size: 20px;
+    font-size: 21px;
     border-radius: 10px;
   }
   nav{

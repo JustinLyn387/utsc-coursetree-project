@@ -8,12 +8,15 @@ import { faTwitter, faFacebookSquare, faInstagram, faLinkedinIn } from '@fortawe
 import { faCogs } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import VModal from 'vue-js-modal'
 
 library.add(faTwitter, faFacebookSquare, faInstagram, faLinkedinIn, faCogs)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
+
+Vue.use(VModal)
 
 Vue.use(VueGoogleMaps, {
   load: {
