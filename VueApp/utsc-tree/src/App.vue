@@ -27,7 +27,7 @@
         <!-- Dropdown menu for settings -->
         <v-menu transition="slide-y-transition" :offset-y="true" bottom>
           <template v-slot:activator="{ on }">
-            <v-btn class="settingsIcon" v-on:click="methodTest" v-on="on" color="primary"><font-awesome-icon :icon="['fas', 'cogs']" size="2x"/></v-btn>
+            <v-btn class="settingsIcon" v-on:click="methodTest" v-on="on" color="primary"><font-awesome-icon :icon="['fas', 'bars']" size="2x"/></v-btn>
           </template>
           <v-list>
             <v-list-item v-for="(item, i) in settingsOptions" :key="i" @click="selectedSetting(item.option)">
