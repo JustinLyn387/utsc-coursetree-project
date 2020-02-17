@@ -3,14 +3,21 @@
     <v-row>
       <!-- Left column which holds the page availability and data settings options -->
       <v-col class="leftPanels">
+        <!-- Admin page title block -->
+        <v-row class="rowSeparators">
+          <v-card class="cardStyles">
+            <h1> - Admin Panel - </h1>
+            <p class="adminSubhead">Manage data, view analytics, and modify users</p>
+          </v-card>
+        </v-row>
         <!-- Page availability card section -->
         <v-row class="rowSeparators">
           <v-card class="cardStyles">
             <h2>Page Availability</h2>
             <p>Controls to disable or enable certain pages</p>
-            <v-switch v-model="courses" class="mx-2" label="Courses"></v-switch>
-            <v-switch v-model="treeview" class="mx-2" label="TreeView"></v-switch>
-            <v-switch v-model="infoLinks" class="mx-2" label="Info & Quick Links"></v-switch>
+            <v-switch v-model="courses" class="mx-2 pageSwitch" label="Courses"></v-switch>
+            <v-switch v-model="treeview" class="mx-2 pageSwitch" label="TreeView"></v-switch>
+            <v-switch v-model="infoLinks" class="mx-2 pageSwitch" label="Info & Quick Links"></v-switch>
           </v-card>
         </v-row>
         <!-- Data settings card section -->
@@ -18,8 +25,12 @@
           <v-card class="cardStyles">
             <h2>Data Settings</h2>
             <p>Buttons to refresh or clear stored data</p>
-            <v-btn class="mr-2" color="primary">Reset Analytics</v-btn>
-            <v-btn class="my-2" color="warning">Refresh Database</v-btn>
+            <div class="buttonCluster">
+              <v-btn class="mr-2 dataButtons" color="primary">Reset Analytics</v-btn>
+              <v-btn class="my-2 dataButtons" color="warning">Refresh Database</v-btn>
+              <v-btn class="mr-2 dataButtons" color="error">Redeploy Website</v-btn>
+              <v-btn class="my-2 dataButtons" color="deep-purple lighten-1">Wipe User Data</v-btn>
+            </div>
           </v-card>
         </v-row>
       </v-col>
@@ -30,28 +41,25 @@
           <v-card class="cardStyles">
             <!-- Tab sections -->
             <v-tabs background-color="transparent" color="primary" grow>
-              <v-tab v-on:click="selectedTab('A')">Analytics</v-tab>
-              <v-tab v-on:click="selectedTab('U')">Users</v-tab>
+              <v-tab v-on:click="selectedTab('A')"><b>Analytics</b></v-tab>
+              <v-tab v-on:click="selectedTab('U')"><b>Users</b></v-tab>
             </v-tabs>
             <!-- If they selected the analytics tab (default) -->
-            <v-container v-if="this.tab==='A'">
-              <h2>Analytics</h2>
+            <v-container class="contentContainer" v-if="this.tab==='A'">
+              <v-row class="analyticsHeader">
+                <h2>App Analytics</h2>
+                <div class="visitButtons">
+                  <v-btn small class="mx-1" color="primary">Daily</v-btn>
+                  <v-btn small class="mx-1" color="warning">Weekly</v-btn>
+                  <v-btn small class="mx-1" color="accent">Monthly</v-btn>
+                  <v-btn small class="mx-1" color="error">Yearly</v-btn>
+                </div>
+              </v-row>
               <v-row>
                 <v-col>
                   <h3>Page Visits</h3>
                   <v-row class="chartDivs">
-                    <v-col>
-                      <v-row>
-                        <div class="visitButtons">
-                          <v-btn small class="mx-1" color="primary">Daily</v-btn>
-                          <v-btn small class="mx-1" color="warning">Weekly</v-btn>
-                          <v-btn small class="mx-1" color="purple">Monthly</v-btn>
-                        </div>
-                      </v-row>
-                      <v-row>
-                        <GChart class="charts" type="ColumnChart" :data="visitsData"/>
-                      </v-row>
-                    </v-col>
+                    <GChart class="charts" type="ColumnChart" :data="visitsData"/>
                   </v-row>
                   <h3>Top Used Quick Links</h3>
                   <v-row class="chartDivs">
@@ -71,7 +79,7 @@
               </v-row>
             </v-container>
             <!-- Else if they want to view the users -->
-            <v-container v-else>
+            <v-container class="contentContainer" v-else>
               <!-- Using a datatable to display the user information -->
               <!-- Able to search the table and default sort is by users name -->
               <v-data-table :headers="userHeaders" :items="users" sort-by="user" :search="search">
@@ -113,7 +121,7 @@
                 <!-- Add in the edit and delete icons for each row in the table -->
                 <template v-slot:item.action="{ item }">
                   <a class="mr-2" @click="editItem(item)"><font-awesome-icon :icon="['fa', 'edit']"/></a>
-                  <a @click="deleteItem(item)"><font-awesome-icon :icon="['fa', 'trash']"/></a>
+                  <a @click="deleteItem(item)"><font-awesome-icon :icon="['fa', 'trash']" color="red"/></a>
                 </template>
 
               </v-data-table>
@@ -228,6 +236,9 @@ export default {
 </script>
 
 <style scoped>
+  h1{
+    text-align: center;
+  }
   .cardStyles{
     padding: 15px;
     width: 100%;
@@ -241,9 +252,7 @@ export default {
     padding-right: 10px;
   }
   .rowSeparators{
-    padding-bottom: 20px;
-    padding-right: 10px;
-    padding-left: 10px;
+    padding: 0 10px 20px;
   }
   .chartDivs{
     max-width: 100%;
@@ -254,14 +263,40 @@ export default {
     height: 100%;
   }
   .visitButtons{
-    padding-left: 10px;
-    padding-bottom: 5px;
+    margin-left: 20px;
+    margin-top: 3px;
   }
   .userSearch{
     max-width: 30%;
     float: right;
   }
   .adminContainer{
-    padding: 0;
+    padding: 35px 0 0 0;
+    min-width: 92%;
+    min-height: 93.5vh;
+    background-color: #ff8f00;
+  }
+  .contentContainer{
+    padding-bottom: 0;
+    padding-top: 20px;
+  }
+  .analyticsHeader{
+    padding-left: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .dataButtons{
+    width: 185px;
+    color: white;
+  }
+  .buttonCluster{
+    padding-left: 3%;
+  }
+  .adminSubhead{
+    text-align: center;
+    font-weight: bold;
+  }
+  .pageSwitch{
+    margin-top: 0;
   }
 </style>

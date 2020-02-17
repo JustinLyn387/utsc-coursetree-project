@@ -27,11 +27,11 @@
         <!-- Dropdown menu for settings -->
         <v-menu transition="slide-y-transition" :offset-y="true" bottom>
           <template v-slot:activator="{ on }">
-            <v-btn class="settingsIcon" v-on:click="methodTest" v-on="on" color="primary"><font-awesome-icon :icon="['fas', 'bars']" size="2x"/></v-btn>
+            <v-btn class="settingsIcon" v-on="on" color="primary"><font-awesome-icon :icon="['fas', 'bars']" size="2x"/></v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="(item, i) in settingsOptions" :key="i" @click="selectedSetting(item.option)">
-              <v-list-item-title>{{ item.option }}</v-list-item-title>
+            <v-list-item v-for="(item, i) in settingsOptions" :key="i" @click="$router.push(item.page)">
+              <v-list-item-title class="popupMenu"><b>{{ item.option }}</b></v-list-item-title>
             </v-list-item>
           </v-list>
 
@@ -60,15 +60,16 @@ export default {
     'navbar': NavBar
   },
   methods: {
-    methodTest () {
-      console.log('HAHAHAHAHA')
-    },
     selectedSetting (setting) {
       alert(setting)
     }
   },
   data: () => ({
-    settingsOptions: [ { option: 'A - Apple' }, { option: 'B - Banana' }, { option: 'C - Cherry' } ]
+    settingsOptions: [
+      { option: 'Admin Panel', page: '/admin' },
+      { option: 'User Dashboard', page: '/dashboard' },
+      { option: 'IDK', page: '/courses' }
+    ]
   })
 }
 </script>
@@ -90,5 +91,8 @@ export default {
   }
   .logo:hover{
     cursor: pointer;
+  }
+  .popupMenu{
+    font-size: 17px;
   }
 </style>

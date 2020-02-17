@@ -79,7 +79,7 @@ export default {
 
 <style scoped>
   h1{
-    color: gray;
+    color: grey;
     padding-bottom: 55px;
     padding-top: 20px;
   }
