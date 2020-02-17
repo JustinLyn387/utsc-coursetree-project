@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h1>Admin Panel</h1>
+  <div class="adminPage">
     <AdminPage></AdminPage>
   </div>
 
@@ -20,6 +19,10 @@ export default {
   h1{
     padding-top: 15px;
     padding-left: 20px;
+    text-align: center;
+  }
+  .adminPage{
+    background-color: #ff8f00;
   }
 
 </style>

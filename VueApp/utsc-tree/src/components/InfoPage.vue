@@ -126,6 +126,7 @@ export default {
     float: left;
     display: inline;
     text-align: -webkit-match-parent;
+    font-weight: bold;
   }
   .utscInfo{
     padding-top: 10px;
