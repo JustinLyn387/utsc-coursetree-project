@@ -4,51 +4,50 @@ import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
+// component: has import for the components because of route level code-splitting
+// this generates a separate chunk for each route which is lazy-loaded when the route is visited.
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    meta: { title: 'Home | UTSC CourseTree' }
   },
   {
     path: '/courses',
     name: 'courses',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Courses.vue')
+    component: () => import('../views/Courses.vue'),
+    meta: { title: 'Directory | UTSC CourseTree' }
   },
   {
     path: '/treeview',
     name: 'treeview',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/TreeView.vue')
+    component: () => import('../views/TreeView.vue'),
+    meta: { title: 'TreeView | UTSC CourseTree' }
   },
   {
     path: '/information',
     name: 'information',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Information.vue')
+    component: () => import('../views/Information.vue'),
+    meta: { title: 'Links & Info | UTSC CourseTree' }
   },
   {
     path: '/admin',
     name: 'admin',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Admin.vue')
+    component: () => import('../views/Admin.vue'),
+    meta: { title: 'ADMIN | UTSC CourseTree' }
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Dashboard.vue')
+    component: () => import('../views/Dashboard.vue'),
+    meta: { title: 'Dashboard | UTSC CourseTree' }
+  },
+  {
+    path: '/credits',
+    name: 'credits',
+    component: () => import('../views/Credits.vue'),
+    meta: { title: 'About & Credits | UTSC CourseTree' }
   }
 ]
 
@@ -56,6 +55,11 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+// Change the tab title based on what page we are on after navigating to it
+router.afterEach((to, from) => {
+  document.title = to.meta.title
 })
 
 export default router
