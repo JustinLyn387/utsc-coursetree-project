@@ -271,10 +271,10 @@ export default {
     float: right;
   }
   .adminContainer{
-    padding: 35px 0 0 0;
-    min-width: 92%;
+    padding: 25px 0 0 0;
+    min-width: 95%;
     min-height: 93.5vh;
-    background-color: #ff8f00;
+    background-color: #3b5998;
   }
   .contentContainer{
     padding-bottom: 0;

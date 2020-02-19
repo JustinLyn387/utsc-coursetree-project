@@ -22,7 +22,7 @@ export default {
     text-align: center;
   }
   .adminPage{
-    background-color: #ff8f00;
+    background-color: #3b5998;
   }
 
 </style>

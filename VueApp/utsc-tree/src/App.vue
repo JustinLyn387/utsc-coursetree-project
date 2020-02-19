@@ -31,7 +31,7 @@
           </template>
           <v-list>
             <v-list-item v-for="(item, i) in settingsOptions" :key="i" @click="$router.push(item.page)">
-              <v-list-item-title class="popupMenu"><b>{{ item.option }}</b></v-list-item-title>
+              <v-list-item-title class="popupMenu">{{ item.option }}</v-list-item-title>
             </v-list-item>
           </v-list>
 
@@ -68,7 +68,7 @@ export default {
     settingsOptions: [
       { option: 'Admin Panel', page: '/admin' },
       { option: 'User Dashboard', page: '/dashboard' },
-      { option: 'IDK', page: '/courses' }
+      { option: 'About & Credits', page: '/credits' }
     ]
   })
 }
