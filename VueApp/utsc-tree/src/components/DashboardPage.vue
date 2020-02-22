@@ -40,7 +40,7 @@
                   <p><b> Instructions:</b> ACORN > Academic History > Complete Academic History > Copy and paste transcript section into a text file<br><b>Note:</b> You can filter the table by clicking on any of the column names!</p>
                 </v-col>
               </v-row>
-              <v-file-input show-size counter accept="text/*" label="Upload Transcript Text File ..."></v-file-input>
+              <v-file-input clearable show-size counter accept="text/*" label="Upload Transcript Text File ..."></v-file-input>
               <v-data-table :headers="courseHeaders" :items="courses" sort-by="date"/>
             </v-container>
           </v-card>
