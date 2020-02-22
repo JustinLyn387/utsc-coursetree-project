@@ -68,7 +68,8 @@ export default {
     settingsOptions: [
       { option: 'Admin Panel', page: '/admin' },
       { option: 'User Dashboard', page: '/dashboard' },
-      { option: 'About & Credits', page: '/credits' }
+      { option: 'News & Feedback', page: '/news' },
+      { option: 'About Us', page: '/about' }
     ]
   })
 }

@@ -44,10 +44,16 @@ const routes = [
     meta: { title: 'Dashboard | UTSC CourseTree' }
   },
   {
-    path: '/credits',
-    name: 'credits',
-    component: () => import('../views/Credits.vue'),
-    meta: { title: 'About & Credits | UTSC CourseTree' }
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/AboutUs.vue'),
+    meta: { title: 'About Us | UTSC CourseTree' }
+  },
+  {
+    path: '/news',
+    name: 'news',
+    component: () => import('../views/News.vue'),
+    meta: { title: 'News & Feedback | UTSC CourseTree' }
   }
 ]
 
