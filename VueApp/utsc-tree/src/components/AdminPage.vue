@@ -15,9 +15,9 @@
           <v-card class="cardStyles">
             <h2>Page Availability</h2>
             <p>Controls to disable or enable certain pages</p>
-            <v-switch v-model="courses" class="mx-2 pageSwitch" label="Courses"></v-switch>
-            <v-switch v-model="treeview" class="mx-2 pageSwitch" label="TreeView"></v-switch>
-            <v-switch v-model="infoLinks" class="mx-2 pageSwitch" label="Info & Quick Links"></v-switch>
+            <v-row><v-switch v-model="courses" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses</p></v-row>
+            <v-row><v-switch v-model="treeview" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView</p></v-row>
+            <v-row><v-switch v-model="infoLinks" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Info & Quick Links</p></v-row>
           </v-card>
         </v-row>
         <!-- Data settings card section -->
@@ -298,5 +298,11 @@ export default {
   }
   .pageSwitch{
     margin-top: 0;
+    padding-left: 10px;
+  }
+  .switchLabels{
+    padding-top: 2px;
+    font-size: 13pt;
+    font-weight: bold;
   }
 </style>
