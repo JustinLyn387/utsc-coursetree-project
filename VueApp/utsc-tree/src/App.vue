@@ -59,16 +59,11 @@ export default {
     LoginModal,
     'navbar': NavBar
   },
-  methods: {
-    selectedSetting (setting) {
-      alert(setting)
-    }
-  },
   data: () => ({
     settingsOptions: [
       { option: 'Admin Panel', page: '/admin' },
       { option: 'User Dashboard', page: '/dashboard' },
-      { option: 'News & Feedback', page: '/news' },
+      { option: 'Feedback & Updates', page: '/feedback' },
       { option: 'About Us', page: '/about' }
     ]
   })

@@ -31,13 +31,13 @@ export default {
     cards: [
       { title: 'Registrars Office',
         subtitle: 'For registration, financial needs, exams, graduation, petitions, TCards, and more.',
-        info: 'Location: Highland Hall (Main Floor)\n\nHours:\tMonday: 9:30-4:30\n\t\tTuesday: 9:30-4:30\n\t\tWednesday: 10:00-4:00 & 5:00-6:45\n\t\tThursday: 9:30-4:30\n\t\tFriday: 9:30-3:00\n\nTelephone: (416) 287-7001\nEmail: Done through registrar website',
+        info: 'Location: Highland Hall (Main Floor)\nHours:\tMonday & Tuesday: 9:30-4:30\n\t\tWednesday: 10:00-4:00 & 5:00-6:45\n\t\tThursday: 9:30-4:30\n\t\tFriday: 9:30-3:00\n\nTelephone: (416) 287-7001\nEmail: Done through registrar website',
         website: 'Visit Website',
         link: 'https://www.utsc.utoronto.ca/registrar',
         flex: 6 },
       { title: 'Admissions',
         subtitle: 'For information on programs, applications, housing, finances, and campus tours.',
-        info: 'Location: Highland Hall (Main Floor)\n\nHours:\tMonday: 9:30-4:30\n\t\tTuesday: 9:30-4:30\n\t\tWednesday: 10:00-4:00 & 5:00-6:45\n\t\tThursday: 9:30-4:30\n\t\tFriday: 9:30-3:00\n\nTelephone: (416) 287-7529\nEmail: utsc.admissions@utoronto.ca',
+        info: 'Location: Highland Hall (Main Floor)\nHours:\tMonday & Tuesday: 9:30-4:30\n\t\tWednesday: 10:00-4:00 & 5:00-6:45\n\t\tThursday: 9:30-4:30\n\t\tFriday: 9:30-3:00\n\nTelephone: (416) 287-7529\nEmail: utsc.admissions@utoronto.ca',
         website: 'Visit Website',
         link: 'https://www.utsc.utoronto.ca/admissions',
         flex: 6 }

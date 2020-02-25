@@ -52,7 +52,6 @@ export default {
   watch: {
     info: function () {
       this.extrainfo = this.info
-      console.log(this.info)
     }
   },
   // Probably going to have to change this to a method once fully implemented

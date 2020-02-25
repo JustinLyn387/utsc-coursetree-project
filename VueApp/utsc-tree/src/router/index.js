@@ -50,10 +50,10 @@ const routes = [
     meta: { title: 'About Us | UTSC CourseTree' }
   },
   {
-    path: '/news',
-    name: 'news',
-    component: () => import('../views/News.vue'),
-    meta: { title: 'News & Feedback | UTSC CourseTree' }
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('../views/Feedback.vue'),
+    meta: { title: 'Feedback & Updates | UTSC CourseTree' }
   }
 ]
 
