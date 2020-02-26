@@ -5,12 +5,12 @@
         <v-card shaped class="feedbackCard">
           <v-row>
             <v-col class="innerColumn">
-              <v-container>
+              <v-container class="pa-0">
                 <v-col>
                   <v-row class="innerRow">
                     <h2>- Leave Feedback -</h2>
-                    <p class="feedbackSection">We would love to hear your opinion on how your experience was using our site!
-                      <br>If you have any feedback or feature requests, let us know by clicking the button below and filling out the form!
+                    <p class="feedbackSection">Let us know how your experience was, we'd love to know!
+                      If you have any feedback or feature requests, let us know by clicking the button below and filling out the form!
                       <br><br>Don't have time? Leave a quick rating for now
                     </p>
                   </v-row>
@@ -19,7 +19,7 @@
                               half-increments hover medium>
                     </v-rating>
                   </v-row>
-                  <v-row class="text-md-center">
+                  <v-row class="text-md-center pt-2">
                     <v-flex>
                       <!--- v-flex is centered now, but we need to center button inside v-flex -->
                       <div class="text-xs-center">
@@ -36,7 +36,7 @@
             <v-col class="innerColumn">
               <v-container class="pa-0">
                 <v-col>
-                  <v-row class="innerRow">
+                  <v-row class="innerRow pb-2">
                     <h2>- Developer Messages -</h2>
                   </v-row>
                   <v-row class="newsFeed">
@@ -163,11 +163,12 @@ export default {
   .innerColumn{
     padding-left: 20px;
     padding-right: 20px;
+    padding-bottom: 5px;
   }
   .newsFeed{
     max-height: 400px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
     overflow-y: auto;
   }
   .feedList{
@@ -176,7 +177,7 @@ export default {
   .feedbackSection{
     text-align: center;
     font-size: 14pt;
-    padding: 45px 20px 5px;
+    padding: 40px 20px 5px;
   }
   .feedbackCard{
     padding-left: 10px;
