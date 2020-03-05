@@ -60,7 +60,11 @@
 
       <!-- Right column to hld the course information -->
       <v-col>
-        <v-container>
+        <v-tabs background-color="transparent" color="primary" grow>
+          <v-tab v-on:click="selectedTab('I')"><b>Course Information</b></v-tab>
+          <v-tab v-on:click="selectedTab('C')"><b>Student Comments</b></v-tab>
+        </v-tabs>
+        <v-container v-if="this.tab==='I'" class="pt-5">
           <template>
             <!-- If they've clicked a course display the information -->
             <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
@@ -83,12 +87,52 @@
             </div>
             <!-- If they haven't selected a course output a default message-->
             <div v-else class="emptyInfo">
-
               <h2>Oops nothing to see here <br> {{ courseInfo.name }}</h2>
               <img src="../assets/Oops.png" height="300" width="300"/>
-
             </div>
           </template>
+        </v-container>
+        <v-container v-else class="pt-2 pr-0 mr-1">
+          <h2>View & Add Course Comments</h2>
+          <small>*Note: Any offensive or profane comments will be removed and that user will lose comment access</small>
+          <v-row>
+            <v-container class="px-0 mx-0 py-0">
+                <v-container class="pa-0">
+                  <v-row>
+                    <v-col cols="12" sm="6" md="4" class="pb-0">
+                      <v-select label="Difficulty" v-model="userComment.difficulty" :items="['5', '4', '3', '2', '1']"></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4" class="pb-0">
+                      <v-select label="Bird Course" v-model="userComment.bird" :items="['Yes', 'No']" required></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4" class="pb-0">
+                      <v-select label="Would Recommend" v-model="userComment.recommend" :items="['Yes!', 'NO!']" required></v-select>
+                    </v-col>
+                    <v-col cols="12" class="py-0">
+                      <v-text-field label="Comment" v-model="userComment.comment" clearable required placeholder="Leave a comment ..."></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              <v-card-actions class="py-0">
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="submitComment()">Submit</v-btn>
+              </v-card-actions>
+            </v-container>
+          </v-row>
+          <h3>{{ numOfComments }} Comments</h3>
+          <v-row class="px-0 mx-0 commentList">
+            <v-row v-for="(item) in courseComments.slice().reverse()" :key="item.user" class="comment">
+              <v-col class="pb-0">
+                <h4>{{ item.user }}</h4>
+                <v-row class="commentRatings py-0">
+                  <v-col class="pt-0"><h5>Would Recommend: {{ item.recommend }}</h5></v-col>
+                  <v-col class="pt-0"><h5>Content Difficulty: {{ item.difficulty }}</h5></v-col>
+                  <v-col class="pt-0"><h5>Bird Course: {{ item.bird }}</h5></v-col>
+                </v-row>
+                <p>{{ item.comment }}</p>
+              </v-col>
+            </v-row>
+          </v-row>
         </v-container>
       </v-col>
 
@@ -103,6 +147,9 @@
 import axios from 'axios'
 export default {
   data: () => ({
+    tab: 'I',
+    numOfComments: 5,
+    userComment: { user: 'TEST USER', difficulty: 0, bird: ' N/A ', recommend: ' N/A ', comment: '' },
     // Course info object
     courseInfo: { name: 'Select a course to view more information ...',
       desc: '',
@@ -120,26 +167,15 @@ export default {
     search: null,
     caseSensitive: false,
     searching: false,
-    topDirectory1: [
-      { letter: 'A' },
-      { letter: 'B' },
-      { letter: 'C' },
-      { letter: 'D' },
-      { letter: 'E' },
-      { letter: 'F' },
-      { letter: 'G' },
-      { letter: 'H' },
-      { letter: 'I' } ],
-    topDirectory2: [
-      { letter: 'J' },
-      { letter: 'L' },
-      { letter: 'M' },
-      { letter: 'N' },
-      { letter: 'P' },
-      { letter: 'R' },
-      { letter: 'S' },
-      { letter: 'T' },
-      { letter: 'W' } ]
+    topDirectory1: [ { letter: 'A' }, { letter: 'B' }, { letter: 'C' }, { letter: 'D' }, { letter: 'E' }, { letter: 'F' }, { letter: 'G' }, { letter: 'H' }, { letter: 'I' } ],
+    topDirectory2: [ { letter: 'J' }, { letter: 'L' }, { letter: 'M' }, { letter: 'N' }, { letter: 'P' }, { letter: 'R' }, { letter: 'S' }, { letter: 'T' }, { letter: 'W' } ],
+    courseComments: [
+      { user: 'Justin Lyn', difficulty: 5, bird: 'Yes', recommend: 'Yes!', comment: 'BLAH BLAH BLAH BLAH', date: 'January 12/2020' },
+      { user: 'Bob', difficulty: 3, bird: 'Yes', recommend: 'NO!', comment: 'BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH', date: 'February 12/2020' },
+      { user: 'RiceBoy', difficulty: 4, bird: 'No', recommend: 'Yes!', comment: 'BLAH BLAH BLAH BLAH', date: 'March 12/2020' },
+      { user: 'Ashley', difficulty: 1, bird: 'Yes', recommend: 'Yes', comment: 'BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH', date: 'April 12/2020' },
+      { user: 'Timothy E', difficulty: 2, bird: 'No', recommend: 'NO!', comment: 'BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH', date: 'May 12/2020' }
+    ]
   }),
   // Watcher so when they select from the autocomplete we can call the function to get the info
   watch: {
@@ -226,6 +262,19 @@ export default {
           this.selectedItems.push.apply(this.selectedItems, element.children)
         }
       })
+    },
+    // Function that switches the tab on selection
+    selectedTab: function (tab) {
+      if (tab === 'C') {
+        this.tab = 'C'
+      } else {
+        this.tab = 'I'
+      }
+    },
+    submitComment: function () {
+      this.courseComments.push(this.userComment)
+      this.numOfComments = this.courseComments.length
+      this.userComment = { user: 'TEST USER', difficulty: 0, bird: ' - ', recommend: ' - ', comment: '' }
     }
   }
 }
@@ -262,6 +311,15 @@ export default {
     padding-right: 5%;
     font-weight: bold;
     font-size: 20px;
+  }
+  .commentList{
+    min-width: 100%;
+  }
+  .comment{
+    min-width: 100%;
+  }
+  .commentRatings{
+    max-width: 65%;
   }
 
 </style>
