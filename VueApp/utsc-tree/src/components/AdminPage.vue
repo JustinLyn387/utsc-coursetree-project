@@ -15,9 +15,9 @@
           <v-card class="cardStyles">
             <h2>Page Availability</h2>
             <p>Controls to disable or enable certain pages</p>
-            <v-row><v-switch v-model="courses" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses</p></v-row>
-            <v-row><v-switch v-model="treeview" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView</p></v-row>
-            <v-row><v-switch v-model="infoLinks" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Info & Quick Links</p></v-row>
+            <v-row><v-switch v-model="this.$store.state.coursePage" @change="togglePage('course')" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses</p></v-row>
+            <v-row><v-switch v-model="this.$store.state.treeViewPage" @change="togglePage('tree')" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView</p></v-row>
+            <v-row><v-switch v-model="this.$store.state.infoPage" @change="togglePage('info')" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Info & Quick Links</p></v-row>
           </v-card>
         </v-row>
         <!-- Data settings card section -->
@@ -26,10 +26,10 @@
             <h2>Data Settings</h2>
             <p>Buttons to refresh or clear stored data</p>
             <div class="buttonCluster">
-              <v-btn class="mr-2 dataButtons" color="primary">Reset Analytics</v-btn>
-              <v-btn class="my-2 dataButtons" color="warning">Refresh Database</v-btn>
-              <v-btn class="mr-2 dataButtons" color="error">Redeploy Website</v-btn>
-              <v-btn class="my-2 dataButtons" color="deep-purple lighten-1">Wipe User Data</v-btn>
+              <v-btn class="mr-2 dataButtons" color="primary" v-on:click="dataButton('Reset')">Reset Analytics</v-btn>
+              <v-btn class="my-2 dataButtons" color="warning" v-on:click="dataButton('Refresh')">Refresh Database</v-btn>
+              <v-btn class="mr-2 dataButtons" color="error" v-on:click="dataButton('Redeploy')">Redeploy Website</v-btn>
+              <v-btn class="my-2 dataButtons" color="deep-purple lighten-1" v-on:click="dataButton('Wipe')">Wipe User Data</v-btn>
             </div>
           </v-card>
         </v-row>
@@ -43,6 +43,8 @@
             <v-tabs background-color="transparent" color="primary" grow>
               <v-tab v-on:click="selectedTab('A')"><b>Analytics</b></v-tab>
               <v-tab v-on:click="selectedTab('U')"><b>Users</b></v-tab>
+              <v-tab v-on:click="selectedTab('C')"><b>Comments</b></v-tab>
+              <v-tab v-on:click="selectedTab('M')"><b>Messages</b></v-tab>
             </v-tabs>
             <!-- If they selected the analytics tab (default) -->
             <v-container class="contentContainer" v-if="this.tab==='A'">
@@ -79,7 +81,7 @@
               </v-row>
             </v-container>
             <!-- Else if they want to view the users -->
-            <v-container class="contentContainer" v-else>
+            <v-container class="contentContainer" v-else-if="this.tab==='U'">
               <!-- Using a datatable to display the user information -->
               <!-- Able to search the table and default sort is by users name -->
               <v-data-table :headers="userHeaders" :items="users" sort-by="user" :search="search">
@@ -126,11 +128,60 @@
 
               </v-data-table>
             </v-container>
-
+            <!-- Else if want to look at flagged comments -->
+            <v-container class="contentContainer" v-else-if="this.tab==='C'">
+              <v-data-table :headers="commentHeaders" :items="flaggedComments" sort-by="date">
+                <template v-slot:top>
+                  <v-toolbar flat color="white">
+                    <!-- Header section with the title and search bar -->
+                    <v-toolbar-title><h3>Flagged Comments</h3></v-toolbar-title>
+                  </v-toolbar>
+                </template>
+                <!-- Add in the edit and delete icons for each row in the table -->
+                <template v-slot:item.action="{ item }">
+                  <v-col class="py-2">
+                    <v-row class="pb-2">
+                      <a><v-btn small color="red accent-3" class="actionButtons" v-on:click="removeAndFlag(item)">Action</v-btn></a>
+                    </v-row>
+                    <v-row>
+                      <a><v-btn small color="green accent-3" class="actionButtons" v-on:click="uflag(item)">Unflag</v-btn></a>
+                    </v-row>
+                  </v-col>
+                </template>
+              </v-data-table>
+            </v-container>
+            <!-- Else want to view message dashboard -->
+            <v-container class="contentContainer" v-else>
+              <h2>Developer Messages & Updates Dashboard</h2>
+              <v-container class="pt-6">
+                <h3>Add new message or announcement</h3>
+                <v-text-field label="Title"></v-text-field>
+                <v-textarea auto-grow clearable label="Type message or announcement" rows="4" row-height="30"></v-textarea>
+                <v-btn class="float-right" color="primary" v-on:click="postMessage()">Add</v-btn>
+              </v-container>
+              <v-container class="py-12">
+                <h3>Publish new update note</h3>
+                <v-row>
+                  <v-col cols="12" sm="6" md="4" class="pb-0">
+                    <v-text-field label="Date" placeholder="MMM/YYYY"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4" class="pb-0">
+                    <v-select label="Type" :items="['Update', 'Bug Fix', 'Launch']"></v-select>
+                  </v-col>
+                </v-row>
+                <v-text-field label="Title"></v-text-field>
+                <v-textarea auto-grow clearable label="Type notes" rows="4" row-height="30"></v-textarea>
+                <v-btn class="float-right" color="primary" v-on:click="publishNotes()">Publish</v-btn>
+              </v-container>
+            </v-container>
           </v-card>
         </v-row>
       </v-col>
     </v-row>
+
+    <!-- Snackbar template -->
+    <v-snackbar class="snackMessage" color="orange lighten-1" v-model="snackMessage.activate" :timeout="snackMessage.timeout">{{ snackMessage.message }}</v-snackbar>
+
   </v-container>
 
 </template>
@@ -140,23 +191,11 @@ export default {
   name: 'AdminPage',
   data: () => ({
     tab: 'A',
-    courses: true,
-    treeview: true,
-    infoLinks: true,
     visitsData: [
-      ['Year', 'Sales', 'Expenses', 'Profit'],
-      ['2014', 1000, 400, 200],
-      ['2015', 1170, 460, 250],
-      ['2016', 660, 1120, 300],
-      ['2017', 1030, 540, 350]
+      ['Year', 'Sales', 'Expenses', 'Profit'], ['2014', 1000, 400, 200], ['2015', 1170, 460, 250], ['2016', 660, 1120, 300], ['2017', 1030, 540, 350]
     ],
     popularData: [
-      ['', ''],
-      ['CSCA08H3', 40],
-      ['MATA37H3', 10],
-      ['CSCD58H3', 25],
-      ['CSCD27H3', 20],
-      ['LINA01H3', 5]
+      ['', ''], ['CSCA08H3', 40], ['MATA37H3', 10], ['CSCD58H3', 25], ['CSCD27H3', 20], ['LINA01H3', 5]
     ],
     dialog: false,
     search: '',
@@ -178,25 +217,30 @@ export default {
       { user: 'Michael', lvl: 'User', login: 'Jan 3/2020' }
     ],
     editedIndex: -1,
-    editedItem: {
-      user: '',
-      lvl: '',
-      login: ''
-    },
-    defaultItem: {
-      user: '',
-      lvl: '',
-      login: ''
-    }
+    editedItem: { user: '', lvl: '', login: '' },
+    defaultItem: { user: '', lvl: '', login: '' },
+    commentHeaders: [
+      { text: 'CID', align: 'left', value: 'cid' },
+      { text: 'User', value: 'user' },
+      { text: 'Comment', value: 'comment' },
+      { text: 'Date', value: 'date' },
+      { text: 'Actions', value: 'action', sortable: false }
+    ],
+    flaggedComments: [
+      { cid: 'C000001', user: 'Justin', comment: 'FUDGE FUDGE FUDGE FUDGE FUDGE', date: 'Jan 1/2020' },
+      { cid: 'C000002', user: 'RAHOOOOOOL', comment: 'SHIP SHIP SHIP', date: 'Jan 2/2020' },
+      { cid: 'C000003', user: 'BOB', comment: 'jub jub jub ship', date: 'Jan 4/2020' },
+      { cid: 'C000004', user: 'Ashley', comment: 'What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah What tblah blah What the jub jub are you fudging blah blah blah What tblah blah What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah', date: 'Jan 23/2020' },
+      { cid: 'C000005', user: 'Test1', comment: 'FUDGE BLAH BLAH', date: 'Jan 5/2020' },
+      { cid: 'C000006', user: 'Test2', comment: 'SHIPWRECK BLUB BLAH JUB JUB', date: 'Jan 4/2020' },
+      { cid: 'C000007', user: 'Test3', comment: 'k', date: 'Jan 18/2020' }
+    ],
+    snackMessage: { activate: false, message: null, timeout: 3000 }
   }),
   methods: {
     // Method to toggle which container to show (Analytics or Users)
     selectedTab (tab) {
-      if (tab === 'A') {
-        this.tab = 'A'
-      } else {
-        this.tab = 'U'
-      }
+      this.tab = tab
     },
     // This method is for when they want to edit a users info. Get the index of user assign new vals and close popup
     editItem (item) {
@@ -225,6 +269,36 @@ export default {
         this.users.push(this.editedItem)
       }
       this.close()
+    },
+    togglePage (page) {
+      if (page === 'course') {
+        this.$store.commit('coursePageToggle')
+      } else if (page === 'tree') {
+        this.$store.commit('treePageToggle')
+      } else {
+        this.$store.commit('infoPageToggle')
+      }
+    },
+    showSnack (message) {
+      this.snackMessage.message = message
+      this.snackMessage.activate = true
+    },
+    postMessage () {
+      this.showSnack('Message was added!')
+    },
+    publishNotes () {
+      this.showSnack('Note was published!')
+    },
+    dataButton (option) {
+      if (option === 'Reset') {
+        this.showSnack('Analytics reset!')
+      } else if (option === 'Refresh') {
+        this.showSnack('An email will be sent once database has been refreshed!')
+      } else if (option === 'Redeploy') {
+        this.showSnack('Site Redeployed!')
+      } else {
+        this.showSnack('Deleted all users!')
+      }
     }
   },
   watch: {
@@ -304,5 +378,11 @@ export default {
     padding-top: 2px;
     font-size: 13pt;
     font-weight: bold;
+  }
+  .actionButtons{
+    width: 80px;
+  }
+  .snackMessage{
+    color: black;
   }
 </style>

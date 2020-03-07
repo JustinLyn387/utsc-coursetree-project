@@ -64,39 +64,39 @@
           <v-tab v-on:click="selectedTab('I')"><b>Course Information</b></v-tab>
           <v-tab v-on:click="selectedTab('C')"><b>Student Comments</b></v-tab>
         </v-tabs>
-        <v-container v-if="this.tab==='I'" class="pt-5">
-          <template>
-            <!-- If they've clicked a course display the information -->
-            <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
-              <h1>{{ courseInfo.name }}</h1>
-              <br><br>
-              <h2>Course Information:</h2>
-              {{ courseInfo.desc }}
-              <br><br>
-              <h2>Prerequisites:</h2>
-              {{ courseInfo.pre }}
-              <br><br>
-              <h3>Exclusions:</h3>
-              {{ courseInfo.excl }}
-              <br><br>
-              <h3>Student Limit:</h3>
-              {{ courseInfo.limit }}
-              <br><br>
-              <h3>Breadth Requirement:</h3>
-              {{ courseInfo.breadth }}
-            </div>
-            <!-- If they haven't selected a course output a default message-->
-            <div v-else class="emptyInfo">
-              <h2>Oops nothing to see here <br> {{ courseInfo.name }}</h2>
-              <img src="../assets/Oops.png" height="300" width="300"/>
-            </div>
-          </template>
+        <v-container v-if="this.tab==='I'" class="pt-5 pr-0">
+          <!-- If they've clicked a course display the information -->
+          <div class="align-center" v-if="courseInfo.name !== 'Select a course to view more information ...'">
+            <h1>{{ courseInfo.name }}</h1>
+            <br><br>
+            <h2>Course Information:</h2>
+            {{ courseInfo.desc }}
+            <br><br>
+            <h2>Prerequisites:</h2>
+            {{ courseInfo.pre }}
+            <br><br>
+            <h3>Exclusions:</h3>
+            {{ courseInfo.excl }}
+            <br><br>
+            <h3>Student Limit:</h3>
+            {{ courseInfo.limit }}
+            <br><br>
+            <h3>Breadth Requirement:</h3>
+            {{ courseInfo.breadth }}
+          </div>
+          <!-- If they haven't selected a course output a default message-->
+          <div v-else class="emptyInfo">
+            <h2>Oops nothing to see here <br> {{ courseInfo.name }}</h2>
+            <img src="../assets/Oops.png" height="300" width="300"/>
+          </div>
+
         </v-container>
-        <v-container v-else class="pt-2 pr-0 mr-1">
-          <h2>View & Add Course Comments</h2>
-          <small>*Note: Any offensive or profane comments will be removed and that user will lose comment access</small>
-          <v-row>
-            <v-container class="px-0 mx-0 py-0">
+        <v-container v-else class="pt-5 pr-0">
+          <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
+            <h2>View & Add Course Comments - {{ courseInfo.name.substring(0,8) }}</h2>
+            <small>*Note: Any offensive or profane comments will be removed and that user will lose comment access</small>
+            <v-row>
+              <v-container class="px-0 mx-0 py-0">
                 <v-container class="pa-0">
                   <v-row>
                     <v-col cols="12" sm="6" md="4" class="pb-0">
@@ -113,26 +113,31 @@
                     </v-col>
                   </v-row>
                 </v-container>
-              <v-card-actions class="py-0">
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="submitComment()">Submit</v-btn>
-              </v-card-actions>
-            </v-container>
-          </v-row>
-          <h3>{{ numOfComments }} Comments</h3>
-          <v-row class="px-0 mx-0 commentList">
-            <v-row v-for="(item) in courseComments.slice().reverse()" :key="item.user" class="comment">
-              <v-col class="pb-0">
-                <h4>{{ item.user }}</h4>
-                <v-row class="commentRatings py-0">
-                  <v-col class="pt-0"><h5>Would Recommend: {{ item.recommend }}</h5></v-col>
-                  <v-col class="pt-0"><h5>Content Difficulty: {{ item.difficulty }}</h5></v-col>
-                  <v-col class="pt-0"><h5>Bird Course: {{ item.bird }}</h5></v-col>
-                </v-row>
-                <p>{{ item.comment }}</p>
-              </v-col>
+                <v-card-actions class="py-0">
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="submitComment()">Submit</v-btn>
+                </v-card-actions>
+              </v-container>
             </v-row>
-          </v-row>
+            <h3>{{ numOfComments }} Comments</h3>
+            <v-row class="px-0 mx-0 commentList">
+              <v-row v-for="(item) in courseComments.slice().reverse()" :key="item.user" class="comment">
+                <v-col class="pb-0">
+                  <h4>{{ item.user }}</h4>
+                  <v-row class="commentRatings py-0">
+                    <v-col class="pt-0"><h5>Would Recommend: {{ item.recommend }}</h5></v-col>
+                    <v-col class="pt-0"><h5>Content Difficulty: {{ item.difficulty }}</h5></v-col>
+                    <v-col class="pt-0"><h5>Bird Course: {{ item.bird }}</h5></v-col>
+                  </v-row>
+                  <p>{{ item.comment }}</p>
+                </v-col>
+              </v-row>
+            </v-row>
+          </div>
+          <div v-else class="emptyInfo">
+            <h2 class="align-center">Really? Still nothing to show<br>Select a course to view comments ...</h2>
+            <img src="../assets/comment.png" height="300" width="300"/>
+          </div>
         </v-container>
       </v-col>
 
@@ -319,7 +324,7 @@ export default {
     min-width: 100%;
   }
   .commentRatings{
-    max-width: 65%;
+    max-width: 85%;
   }
 
 </style>
