@@ -171,30 +171,9 @@ def courseDirectory():
     return json.dumps(finalDir, indent=4, separators=(',', ': '))
 
 
-def getAllCourses():
+def getAllCourses(switch):
     """
     This method will return a list of all the courses
-    """
-    # Create the db connection
-    connection = createConnection()
-    # Get the list of all the courses
-    directory = getDirectory(connection, 2, "")
-    # Create the list of dictionaries with the courses
-    courses = []
-    for course in directory:
-        code = re.findall(r'[A-Z]{4}[0-9]{2}[A-Z][0-9]', str(course))
-        item = {"value": code[0], "text": course[0]}
-        courses.append(item)
-
-    # End the connection
-    endConnection(connection)
-
-    return json.dumps(courses, indent=4, separators=(',', ': '))
-
-
-def getCoursesWIDs():
-    """
-    This method will return a list of all the courses with ids for directory page search
     """
     # Create the db connection
     connection = createConnection()
@@ -205,7 +184,10 @@ def getCoursesWIDs():
     index = 0
     for course in directory:
         code = re.findall(r'[A-Z]{4}[0-9]{2}[A-Z][0-9]', str(course))
-        item = {"id": index, "name": course[0]}
+        if switch == '0':
+            item = {"value": code[0], "text": course[0]}
+        else:
+            item = {"id": index, "name": course[0]}
         courses.append(item)
         index += 1
 
@@ -215,75 +197,35 @@ def getCoursesWIDs():
     return json.dumps(courses, indent=4, separators=(',', ': '))
 
 
-def test():
+def getPageStatus(page):
     """
-    This function is designed to look through the database and find all the prereqs for the desired course
+    This method will return the status of the desired page
     """
     # Create the db connection
     connection = createConnection()
-    # Get the prereqs for the course
-    prereqsD = searchPre(connection, "ANTD05H3")
-    breakdown = []
-    for item in prereqsD.replace(".", "").replace(",", "").replace("'", "").split("] "):
-        if "and" in item[0:3]:
-            breakdown.append(item[0:3])
-            breakdown.append(item[5:])
-        elif "or" in item[0:2]:
-            breakdown.append(item[0:2])
-            breakdown.append(item[4:])
-        else:
-            breakdown.append(item)
-
-    if breakdown[0][0] == "[":
-        breakdown[0] = breakdown[0][2:]
-    print(breakdown)
-
-
-def generatePrereqCode():
-    # Create the db connection
-    connection = createConnection()
-    # Get the prereq columns
-    prereqCols = getPrereqColumn(connection)
-    # Loop through each row and generate the codes
-    for prereq in prereqCols:
-        # If no prereqs
-        if prereq[1] == "N/A":
-            updatePrereqCode(connection, ("0", prereq[0]))
-        elif len(prereq[1]) == 8:
-            # Find the course ID and insert it
-            updatePrereqCode(connection, (getCourseID(connection, prereq[1]), prereq[0]))
-        # Simple case with just AND or OR (no brackets or anything)
-        elif (not bool(re.search(r'[\]\[(),.]', prereq[1]))) and re.search(r'[A-Z]{4}[0-9]{2}[A-Z][0-9]', prereq[1]):
-            code = ""
-            # IF to see if dealing with & or |
-            if prereq[1].count("and") > 0 and prereq[1].count("or") == 0:
-                courses = prereq[1].split(" and ")
-                for course in courses:
-                    code += getCourseID(connection, course.strip()) + "&"
-            elif prereq[1].count("or") > 0 and prereq[1].count("and") == 0:
-                courses = prereq[1].split(" or ")
-                for course in courses:
-                    code += getCourseID(connection, course.strip()) + "|"
-            # ELSE CASE WHEN YOU HAVE AND&OR NEED TO FINISH FORMATTER FIRST THOUGH TO REMOVE [] WHEN UNNECESSARY
-            # Insert the code
-            updatePrereqCode(connection, (code[:-1], prereq[0]))
-        # "Any #.0 Credits" case
-        elif re.match(r'[Any\s\d.\d\sCredits.?]', prereq[1]) and len(prereq[1]) <= 16:
-            # Insert the code
-            updatePrereqCode(connection, (prereq[1], prereq[0]))
-        # Case where there is no course specified (just plain text)
-        elif not bool(re.search(r'[A-Z]{4}[0-9]{2}[A-Z][0-9]', prereq[1])):
-            updatePrereqCode(connection, (prereq[1].replace('[', '').replace(']', ''), prereq[0]))
-        # Co-op case just put 0
-        elif bool(re.search(r'COP[A-Z][0-9]{2}[A-Z][0-9]', prereq[1])):
-            # Insert the code
-            updatePrereqCode(connection, ("0", prereq[0]))
-        else:
-            # Insert the code
-            updatePrereqCode(connection, ("-", prereq[0]))
-
-    # End the connection
+    # Get the status
+    status = getPageLockStatus(connection, page)
+    # End the connection and return status
     endConnection(connection)
+    return json.dumps(status)
+
+
+def setPageStatus(page):
+    """
+    This method will return the status of the desired page
+    """
+    # Create the db connection
+    connection = createConnection()
+    # Get the status
+    status = getPageLockStatus(connection, page)
+    # Flip the status
+    if status[0][0] == 1:
+        status = setPageLockStatus(connection, (0, page))
+    else:
+        status = setPageLockStatus(connection, (1, page))
+    # End the connection and return status
+    endConnection(connection)
+    return json.dumps('Success')
 
 
 def removeOld():
@@ -323,54 +265,6 @@ def removeOld():
             # Update with the new prereq
             updatePrereq(connection, (temp, prereq[0]))
 
-
-def formatter():
-    # Create the db connection
-    connection = createConnection()
-    # Get the prereq columns
-    prereqCols = getPrereqColumn(connection)
-    # Lop through the list and start updating
-    for prereq in prereqCols:
-        temp = prereq[1]
-        flag = False
-        # Make sure everything is formatted properly
-        courses = re.findall(r'[A-Z]{4}[0-9]{2}[A-Z][0-9]', temp)
-        if len(courses) == 1 and len(temp) <= 20:
-            temp = temp[:8]
-            flag = True
-        # Get rid of 'or equivalent'
-        equivCounter = temp.count("or equivalent")
-        if equivCounter > 0:
-            flag = True
-            index = temp.index("or equivalent")
-            while equivCounter > 0:
-                # Remove it
-                temp = temp[:index] + temp[index+14:]
-                equivCounter -= 1
-            # Special case
-            if prereq[0] == 671:
-                # Remove it
-                temp = temp[:len(prereq[1])-14]
-
-        if flag:
-            # Update the prereq
-            updatePrereq(connection, (temp, prereq[0]))
-
-
-# REMOVE THIS WHEN DONE
-def specialCases():
-    # Create the db connection
-    connection = createConnection()
-    # Get the prereq columns
-    special = getSpecialCases(connection, "-")
-    for case in special:
-        print(case)
-
-
-#removeOld()
-#formatter()
-#generatePrereqCode()
-#specialCases()
 
 def unlockedCourses(prereq):
     """

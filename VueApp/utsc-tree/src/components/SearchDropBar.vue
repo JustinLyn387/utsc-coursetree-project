@@ -37,7 +37,7 @@ export default {
   },
   // Use axios for API call when page loads to load upt he data into the search bar
   created () {
-    axios.get('http://127.0.0.1:5000/DataRetrieval/courses')
+    axios.get('http://127.0.0.1:5000/DataRetrieval/courses/0')
       .then(response => {
         // Run a loop to append the data
         for (let course in response.data) {

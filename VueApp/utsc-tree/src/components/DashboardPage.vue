@@ -40,19 +40,32 @@
                   <p><b> Instructions:</b> ACORN > Academic History > Complete Academic History > Copy and paste transcript section into a text file<br><b>Note:</b> You can filter the table by clicking on any of the column names!</p>
                 </v-col>
               </v-row>
-              <v-file-input clearable show-size counter accept="text/*" label="Upload Transcript Text File ..."></v-file-input>
+              <v-row class="mt-0">
+                <v-col class="fileInput pt-0">
+                  <v-file-input clearable show-size counter accept="text/*" label="Upload Transcript Text File ..." id="file" ref="file" v-on:change="handleFileUpload()"></v-file-input>
+                </v-col>
+                <v-col class="submitButton pt-4 pl-6">
+                  <v-btn color="primary" v-on:click="submitFile()">Upload</v-btn>
+                </v-col>
+              </v-row>
               <v-data-table :headers="courseHeaders" :items="courses" sort-by="date"/>
             </v-container>
           </v-card>
         </v-row>
       </v-col>
     </v-row>
+
+    <!-- Snackbar template -->
+    <v-snackbar class="snackMessage" color="orange lighten-1" v-model="snackMessage.activate" :timeout="snackMessage.timeout">{{ snackMessage.message }}</v-snackbar>
+
   </v-container>
 
 </template>
 
 <script>
 import TextSampleModal from './TextSampleModal'
+// Import axios since using APIs to fetch and send data
+import axios from 'axios'
 export default {
   name: 'DashboardPage',
   components: {
@@ -60,6 +73,7 @@ export default {
   },
   data: () => ({
     tab: 'Overview',
+    file: '',
     courseHeaders: [
       { text: 'Course Code', align: 'left', value: 'code' },
       { text: 'Course Title', value: 'title' },
@@ -75,7 +89,8 @@ export default {
       { code: 'CSCD58H3', title: 'Same Computer Science', date: '2020 Winter' },
       { code: 'LINA01H3', title: 'More Linguistics', date: '2019 Fall' },
       { code: 'CSCA08H3', title: 'Computer Science', date: '2018 Summer' }
-    ]
+    ],
+    snackMessage: { activate: false, message: null, timeout: 3000 }
   }),
   methods: {
     switchTab (tab) {
@@ -84,6 +99,33 @@ export default {
       } else if (tab === 'TC') {
         this.tab = 'Taken'
       }
+    },
+    submitFile () {
+      let formData = new FormData()
+      var transcriptFile = document.querySelector('#file')
+      formData.append('transcript', transcriptFile.files[0])
+      // Send the file to the server
+      axios.post('http://127.0.0.1:5000/DataPosting/transcript', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        .then(response => {
+          console.log(response)
+          if (response.data === 'ERROR') {
+            this.showSnack('INVALID File exception!')
+          } else {
+            this.courses = response.data
+            this.showSnack('Transcript successfully uploaded!')
+          }
+          this.$refs.file.reset()
+        })
+        .catch(function () {
+          this.showSnack('An error occurred!')
+        })
+    },
+    handleFileUpload () {
+      this.file = this.$refs.file.file
+    },
+    showSnack (message) {
+      this.snackMessage.message = message
+      this.snackMessage.activate = true
     }
   }
 }
@@ -127,6 +169,12 @@ export default {
   .dashSubhead{
     text-align: center;
     font-weight: bold;
+  }
+  .fileInput{
+    max-width: 85%;
+  }
+  .submitButton{
+    max-width: 15%;
   }
 
 </style>

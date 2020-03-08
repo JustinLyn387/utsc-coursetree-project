@@ -211,7 +211,7 @@ export default {
         this.errors.push(e)
       })
     // API call to get just the courses with no divisions for autocomplete section
-    axios.get('http://127.0.0.1:5000/DataRetrieval/coursesWids')
+    axios.get('http://127.0.0.1:5000/DataRetrieval/courses/1')
       .then(response => {
         // Run a loop to append the data
         for (let course in response.data) {
