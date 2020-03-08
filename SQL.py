@@ -207,3 +207,33 @@ def getUnlocked(connection, course):
     unlocked = cur.fetchall()
     # Return the prereqs
     return unlocked
+
+
+def getPageLockStatus(connection, page):
+    """
+    This function will return the lock status of the desired page
+    """
+    # Create the command template
+    cur = connection.cursor()
+    if page == '*':
+        cur.execute(''' SELECT Status FROM PageLocks ''')
+    else:
+        # Execute the command
+        cur.execute(''' SELECT Status FROM PageLocks WHERE ID = ?''', (page,))
+    pageStatus = cur.fetchall()
+    # Return the info
+    return pageStatus
+
+
+def setPageLockStatus(connection, status):
+    """
+    This function will return the lock status of the desired page
+    """
+    sql = ''' UPDATE PageLocks SET Status = ? WHERE ID = ? '''
+    cur = connection.cursor()
+    # Execute the insert
+    cur.execute(sql, status)
+    connection.commit()
+    # Return the ID
+    return cur.lastrowid
+

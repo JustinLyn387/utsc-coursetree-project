@@ -15,9 +15,9 @@
           <v-card class="cardStyles">
             <h2>Page Availability</h2>
             <p>Controls to disable or enable certain pages</p>
-            <v-row><v-switch v-model="this.$store.state.coursePage" @change="togglePage('course')" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses</p></v-row>
-            <v-row><v-switch v-model="this.$store.state.treeViewPage" @change="togglePage('tree')" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView</p></v-row>
-            <v-row><v-switch v-model="this.$store.state.infoPage" @change="togglePage('info')" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Info & Quick Links</p></v-row>
+            <v-row><v-switch v-model="coursePageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses</p></v-row>
+            <v-row><v-switch v-model="treeViewPageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView</p></v-row>
+            <v-row><v-switch v-model="infoPageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Info & Quick Links</p></v-row>
           </v-card>
         </v-row>
         <!-- Data settings card section -->
@@ -187,6 +187,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'AdminPage',
   data: () => ({
@@ -270,15 +271,6 @@ export default {
       }
       this.close()
     },
-    togglePage (page) {
-      if (page === 'course') {
-        this.$store.commit('coursePageToggle')
-      } else if (page === 'tree') {
-        this.$store.commit('treePageToggle')
-      } else {
-        this.$store.commit('infoPageToggle')
-      }
-    },
     showSnack (message) {
       this.snackMessage.message = message
       this.snackMessage.activate = true
@@ -304,6 +296,59 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+    }
+  },
+  computed: {
+    coursePageStatus: {
+      get () {
+        return this.$store.state.coursePage
+      },
+      set () {
+        this.$store.commit('coursePageToggle')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/pageStatus/1')
+          .then(response => {
+            if (response.data === 'Success') {
+              this.showSnack('Course directory page toggled!')
+            }
+          })
+          .catch(e => {
+            this.showSnack('ERROR Occurred: ' + e)
+          })
+      }
+    },
+    treeViewPageStatus: {
+      get () {
+        return this.$store.state.treeViewPage
+      },
+      set () {
+        this.$store.commit('treePageToggle')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/pageStatus/2')
+          .then(response => {
+            if (response.data === 'Success') {
+              this.showSnack('TreeView page toggled!')
+            }
+          })
+          .catch(e => {
+            this.showSnack('ERROR Occurred: ' + e)
+          })
+      }
+    },
+    infoPageStatus: {
+      get () {
+        return this.$store.state.infoPage
+      },
+      set () {
+        this.$store.commit('infoPageToggle')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/pageStatus/3')
+          .then(response => {
+            if (response.data === 'Success') {
+              this.showSnack('Info & Links page toggled!')
+            }
+          })
+          .catch(e => {
+            this.showSnack('ERROR Occurred: ' + e)
+          })
+      }
     }
   }
 }
