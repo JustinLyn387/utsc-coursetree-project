@@ -13,7 +13,7 @@ api = Api(app)
 CORS(app)
 
 
-@app.route('/AddPrereq', methods=['POST', 'GET'])
+@app.route('/AddPrereq', methods=['POST', 'PUT'])
 def add_prereq():
     con = create_connection()
     try:
@@ -22,7 +22,10 @@ def add_prereq():
             prereq = request.args.get('Prereq')
         except:
             prereq = ""
-        result = insert_course_prereq(con, course_code, prereq)
+        if request.method == "PUT":
+            result = insert_course_prereq(con, course_code, prereq)
+        else:
+            result = update_prereq(con, course_code, prereq)
         end_connection(con)
         return str(result)
     except Exception as e:
