@@ -34,7 +34,7 @@ def insert_course_prereq(connection, course_code, prereq):
 def insert_or_node(connection, parent_course_code, or_node_num, prereq):
     sql = ''' INSERT INTO OrPrereqs(OrNodeID, CourseCode) VALUES(?,?) '''
     cur = connection.cursor()
-    OrNodeID = "OR_" + parent_course_code + or_node_num
+    OrNodeID = "OR_" + parent_course_code + "_" + or_node_num
     cur.execute(sql, [OrNodeID, prereq])
     connection.commit()
     return cur.lastrowid
