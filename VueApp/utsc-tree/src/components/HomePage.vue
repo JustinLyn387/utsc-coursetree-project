@@ -21,9 +21,6 @@
 </template>
 
 <script>
-
-import axios from 'axios'
-
 export default {
   components: {},
   data: () => ({
@@ -41,30 +38,7 @@ export default {
         href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions'
       }
     ]
-  }),
-  beforeCreate () {
-    axios.get('http://127.0.0.1:5000/DataRetrieval/pageStatus/*')
-      .then(response => {
-        if (response.data[0][0] === 1) {
-          this.$store.commit('coursePageSwitch', true)
-        } else {
-          this.$store.commit('coursePageSwitch', false)
-        }
-        if (response.data[1][0] === 1) {
-          this.$store.commit('treePageToggle', true)
-        } else {
-          this.$store.commit('treePageToggle', false)
-        }
-        if (response.data[2][0] === 1) {
-          this.$store.commit('infoPageToggle', true)
-        } else {
-          this.$store.commit('infoPageToggle', false)
-        }
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-  }
+  })
 }
 </script>
 

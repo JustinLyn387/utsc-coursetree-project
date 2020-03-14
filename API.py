@@ -73,12 +73,36 @@ class pageStatus(Resource):
         return json.loads(DataRetrieval.setPageStatus(page))
 
 
+class dataLoad(Resource):
+    def get(self):
+        return json.loads(DataRetrieval.dataLoad())
+
+
+class saveRecord(Resource):
+    def post(self):
+        incomingData = request.get_json()
+        if incomingData['type'] == 'message':
+            return json.loads(DataRetrieval.saveMessage(incomingData['data']))
+        else:
+            return json.loads(DataRetrieval.saveNote(incomingData['data']))
+
+
+class saveComment(Resource):
+    def post(self):
+        newComment = request.get_json()
+        return json.loads(DataRetrieval.saveComment(newComment['comment']))
+
+
+
 api.add_resource(prereqsTree, '/DataRetrieval/<course>')
 api.add_resource(courseDirectory, '/DataRetrieval/directory')
 api.add_resource(courseInfo, '/DataRetrieval/courseInfo/<course>')
 api.add_resource(getCourses, '/DataRetrieval/courses/<withIDs>')
 api.add_resource(uploadedTranscript, '/DataPosting/transcript')
 api.add_resource(pageStatus, '/DataRetrieval/pageStatus/<page>')
+api.add_resource(dataLoad, '/DataRetrieval/dataLoad')
+api.add_resource(saveRecord, '/DataPosting/record')
+api.add_resource(saveComment, '/DataPosting/comment')
 
 if __name__ == '__main__':
     app.run()

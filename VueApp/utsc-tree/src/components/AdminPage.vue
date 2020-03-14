@@ -155,22 +155,22 @@
               <h2>Developer Messages & Updates Dashboard</h2>
               <v-container class="pt-6">
                 <h3>Add new message or announcement</h3>
-                <v-text-field label="Title"></v-text-field>
-                <v-textarea auto-grow clearable label="Type message or announcement" rows="4" row-height="30"></v-textarea>
+                <v-text-field label="Title" v-model="message.messageTitle"></v-text-field>
+                <v-textarea auto-grow clearable label="Type message or announcement" rows="4" row-height="30" v-model="message.messageBody"></v-textarea>
                 <v-btn class="float-right" color="primary" v-on:click="postMessage()">Add</v-btn>
               </v-container>
               <v-container class="py-12">
                 <h3>Publish new update note</h3>
                 <v-row>
                   <v-col cols="12" sm="6" md="4" class="pb-0">
-                    <v-text-field label="Date" placeholder="MMM/YYYY"></v-text-field>
+                    <v-text-field label="Date" placeholder="MMM/YYYY" v-model="note.noteDate"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4" class="pb-0">
-                    <v-select label="Type" :items="['Update', 'Bug Fix', 'Launch']"></v-select>
+                    <v-select label="Type" :items="['Update', 'Bug Fix', 'Launch', 'Pilot']" v-model="note.noteType"></v-select>
                   </v-col>
                 </v-row>
-                <v-text-field label="Title"></v-text-field>
-                <v-textarea auto-grow clearable label="Type notes" rows="4" row-height="30"></v-textarea>
+                <v-text-field label="Title" v-model="note.noteTitle"></v-text-field>
+                <v-textarea auto-grow clearable label="Type notes" rows="4" row-height="30" v-model="note.noteBody"></v-textarea>
                 <v-btn class="float-right" color="primary" v-on:click="publishNotes()">Publish</v-btn>
               </v-container>
             </v-container>
@@ -192,6 +192,8 @@ export default {
   name: 'AdminPage',
   data: () => ({
     tab: 'A',
+    message: { messageTitle: '', messageBody: '', date: '' },
+    note: { noteTitle: '', noteBody: '', noteDate: '', noteType: '', Colour: '' },
     visitsData: [
       ['Year', 'Sales', 'Expenses', 'Profit'], ['2014', 1000, 400, 200], ['2015', 1170, 460, 250], ['2016', 660, 1120, 300], ['2017', 1030, 540, 350]
     ],
@@ -276,10 +278,55 @@ export default {
       this.snackMessage.activate = true
     },
     postMessage () {
-      this.showSnack('Message was added!')
+      // Fill out the date stamp
+      this.message.date = new Date().toLocaleString()
+      this.$store.commit('postMessage', this.message)
+      // save the message in the database
+      let record = { type: 'message', data: this.message }
+      axios.post('http://127.0.0.1:5000/DataPosting/record', record)
+        .then(response => {
+          if (response.data === 'ERROR') {
+            this.showSnack('ERROR occurred!')
+          } else {
+            // Show snackbar confirmation
+            this.showSnack('Message successfully recorded!')
+          }
+        })
+        .catch(function () {
+          this.showSnack('An error occurred!')
+        })
+      // reset
+      this.message = { messageTitle: '', messageBody: '', date: '' }
     },
     publishNotes () {
-      this.showSnack('Note was published!')
+      // determine the color based on the note type
+      if (this.note.noteType === 'Launch') {
+        this.note.Colour = 'primary'
+      } else if (this.note.noteType === 'Update') {
+        this.note.Colour = 'purple'
+      } else if (this.note.noteType === 'Pilot') {
+        this.note.Colour = 'cyan'
+      } else {
+        this.note.Colour = 'pink'
+      }
+      // push the message
+      this.$store.commit('publishNote', this.note)
+      // save the message in the database
+      let record = { type: 'note', data: this.note }
+      axios.post('http://127.0.0.1:5000/DataPosting/record', record)
+        .then(response => {
+          if (response.data === 'ERROR') {
+            this.showSnack('ERROR occurred!')
+          } else {
+            // Show snackbar confirmation
+            this.showSnack('Note successfully recorded!')
+          }
+        })
+        .catch(function () {
+          this.showSnack('An error occurred!')
+        })
+      // reset
+      this.note = { noteTitle: '', noteBody: '', noteDate: '', noteType: '', Colour: '' }
     },
     dataButton (option) {
       if (option === 'Reset') {

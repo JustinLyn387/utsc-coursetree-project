@@ -107,7 +107,6 @@ export default {
       // Send the file to the server
       axios.post('http://127.0.0.1:5000/DataPosting/transcript', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         .then(response => {
-          console.log(response)
           if (response.data === 'ERROR') {
             this.showSnack('INVALID File exception!')
           } else {

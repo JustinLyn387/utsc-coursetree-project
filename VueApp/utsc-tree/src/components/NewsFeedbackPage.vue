@@ -19,7 +19,7 @@
                               half-increments hover medium>
                     </v-rating>
                   </v-row>
-                  <v-row class="text-md-center pt-2">
+                  <v-row class="text-md-center pt-0">
                     <v-flex>
                       <!--- v-flex is centered now, but we need to center button inside v-flex -->
                       <div class="text-xs-center">
@@ -43,15 +43,15 @@
                     <!-- Loop through the array to populate the feed and create the list items -->
                     <v-list two-line class="feedList">
                       <v-list-item-group>
-                        <template v-for="(item, index) in newsItems">
-                          <v-list-item :key="item.title">
+                        <template v-for="(item, index) in devMessages">
+                          <v-list-item :key="item.messageTitle">
                             <v-list-item-content>
-                              <v-list-item-title v-text="item.title"></v-list-item-title>
-                              <v-list-item-subtitle class="text--primary" v-text="item.info"></v-list-item-subtitle>
-                              <v-list-item-subtitle v-text="item.date"></v-list-item-subtitle>
+                              <h4 v-text="item.messageTitle"></h4>
+                              <p class="text--primary" v-text="item.messageBody"></p>
+                              <v-list-item-subtitle class="float-right" v-text="item.date"></v-list-item-subtitle>
                             </v-list-item-content>
                           </v-list-item>
-                          <v-divider v-if="index + 1 < newsItems.length" :key="index"></v-divider>
+                          <v-divider v-if="index + 1 < devMessages.length" :key="index"></v-divider>
                         </template>
                       </v-list-item-group>
                     </v-list>
@@ -69,14 +69,14 @@
           <h2 class="sectionHeaders">- Updates & Releases -</h2>
           <v-timeline>
             <!-- Use a loop to create the timeline -->
-            <v-timeline-item v-for="(item, i) in releaseItems.slice().reverse()" :key="i" :color="item.color" small>
+            <v-timeline-item v-for="(item, i) in releaseNotes.slice().reverse()" :key="i" :color="item.Colour" small>
               <template v-slot:opposite>
-                <span :class="`headline font-weight-light ${item.color}--text`" v-text="item.date"></span>
+                <span :class="`headline font-weight-light ${item.Colour}--text`" v-text="item.noteDate"></span>
               </template>
               <div class="py-4">
-                <h2 :class="`headline font-weight-bold mb-4 ${item.color}--text`">{{ item.title }}</h2>
+                <h2 :class="`headline font-weight-bold mb-4 ${item.Colour}--text`">{{ item.noteTitle }}</h2>
                 <div>
-                  {{ item.message }}
+                  {{ item.noteBody }}
                 </div>
               </div>
             </v-timeline-item>
@@ -95,37 +95,17 @@ export default {
   data: () => ({
     side: true,
     rating: 4.5,
-    // TEMP DATA (Will need to populate on creation and create watchers because admin panel will have the ability to add new things live
-    releaseItems: [
-      { size: false, color: 'green', title: 'Test 1: Launch', message: 'Test 1 Body Test 1 Body Test 1 Body Test 1 Body Test 1 Body Test 1 Body Test 1 Body Test 1 Body Test 1 Body', date: 'Jan 2020' },
-      { size: true, color: 'cyan', title: 'Test 2: New Features', message: 'Test 2 Body Test 2 Body Test 2 Body Test 2 Body Test 2 Body Test 2 Body Test 2 Body Test 2 Body Test 2 Body', date: 'Feb 2020' },
-      { size: false, color: 'red', title: 'Test 3: Bug Fix', message: 'Test 3 Body Test 3 Body Test 3 Body Test 3 Body Test 3 Body Test 3 Body Test 3 Body Test 3 Body Test 3 Body', date: 'Mar 2020' },
-      { size: true, color: 'red', title: 'Test 4: Bug Fix', message: 'Test 4 Body Test 4 Body Test 4 Body Test 4 Body Test 4 Body Test 4 Body Test 4 Body Test 4 Body Test 4 Body', date: 'Jun 2020' },
-      { size: false, color: 'primary', title: 'Test 5: New Features', message: 'Test 5 Body Test 5 Body Test 5 Body Test 5 Body Test 5 Body Test 5 Body Test 5 Body Test 5 Body Test 5 Body', date: 'Nov 2020' },
-      { size: true, color: 'pink', title: 'Test 6: Bug Fix', message: 'Test 6 Body Test 6 Body Test 6 Body Test 6 Body Test 6 Body Test 6 Body Test 6 Body Test 6 Body Test 6 Body', date: 'Dec 2020' }
-    ],
-    newsItems: [
-      { title: 'Message 1: A', info: 'Test 1 Body', date: 'January 12/2020' },
-      { title: 'Message 2: B', info: 'Test 2 Body', date: 'February 12/2020' },
-      { title: 'Message 3: C', info: 'Test  Body', date: 'March 12/2020' },
-      { title: 'Message 4: D', info: 'Test 4 Body', date: 'April 12/2020' },
-      { title: 'Message 5: E', info: 'Test 5 Body', date: 'May 12/2020' },
-      { title: 'Message 6: F', info: 'Test 6 Body', date: 'June 12/2020' },
-      { title: 'Message 7: G', info: 'Test 7 Body', date: 'July 12/2020' },
-      { title: 'Message 8: H', info: 'Test 8 Body', date: 'July 12/2020' },
-      { title: 'Message 9: I', info: 'Test 9 Body', date: 'July 12/2020' },
-      { title: 'Message 10: J', info: 'Test 10 Body', date: 'July 12/2020' },
-      { title: 'Message 11: K', info: 'Test 11 Body', date: 'July 12/2020' },
-      { title: 'Message 12: L', info: 'Test 12 Body', date: 'July 12/2020' },
-      { title: 'Message 13: M', info: 'Test 13 Body', date: 'July 12/2020' }
-    ]
+    releaseNotes: [],
+    devMessages: []
   }),
   filters: {
-
     reverse: function (arr) {
       return arr.reverse()
     }
-
+  },
+  created () {
+    this.devMessages = this.$store.state.devMessages
+    this.releaseNotes = this.$store.state.releaseNotes
   }
 }
 </script>
@@ -147,6 +127,7 @@ export default {
     max-width: 90%;
     padding-top: 25px;
     background-color: #E3F2FD;
+    min-height: 95vh;
   }
   .mainRow{
     justify-content: center;
@@ -161,6 +142,7 @@ export default {
     max-width: 80%;
   }
   .innerColumn{
+    width: 50%;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 5px;
@@ -177,7 +159,7 @@ export default {
   .feedbackSection{
     text-align: center;
     font-size: 14pt;
-    padding: 40px 20px 5px;
+    padding: 50px 20px 5px;
   }
   .feedbackCard{
     padding-left: 10px;
@@ -185,6 +167,9 @@ export default {
   }
   .ratingStars{
     padding-bottom: 40px;
+  }
+  .float-right{
+    text-align: right;
   }
 
 </style>
