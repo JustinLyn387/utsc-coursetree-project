@@ -237,3 +237,81 @@ def setPageLockStatus(connection, status):
     # Return the ID
     return cur.lastrowid
 
+
+def getDevMessages(connection):
+    """
+    This function will return all the dev messages
+    """
+    # Create the command template
+    cur = connection.cursor()
+    cur.execute(''' SELECT Title, Body, Date FROM DevMessages ''')
+    messages = cur.fetchall()
+    # Return the messages
+    return messages
+
+
+def getUpdateNotes(connection):
+    """
+    This function will return all the update notes
+    """
+    # Create the command template
+    cur = connection.cursor()
+    cur.execute( ''' SELECT Title, Body, Type, Colour, Date  FROM UpdateNotes ''')
+    notes = cur.fetchall()
+    # Return the notes
+    return notes
+
+
+def insertMessage(connection, message):
+    """
+    This function will save the message
+    """
+    # Create the command template
+    sql = ''' INSERT INTO DevMessages(Title, Body, Date) VALUES(?,?,?) '''
+    cur = connection.cursor()
+    # Execute the insert
+    cur.execute(sql, message)
+    connection.commit()
+    # Return the ID
+    return cur.lastrowid
+
+
+def insertNote(connection, note):
+    """
+    This function will save the message
+    """
+    # Create the command template
+    sql = ''' INSERT INTO UpdateNotes(Title, Body, Type, Colour, Date) VALUES(?,?,?,?,?) '''
+    cur = connection.cursor()
+    # Execute the insert
+    cur.execute(sql, note)
+    connection.commit()
+    # Return the ID
+    return cur.lastrowid
+
+
+def insertComment(connection, comment):
+    """
+    This function will insert the comment into the database
+    """
+    # Create the command template
+    sql = ''' INSERT INTO CourseComments(CourseID, CourseName, Comment, Flagged, Recommend, Difficulty, Bird, User, Date) VALUES(?,?,?,?,?,?,?,?,?) '''
+    cur = connection.cursor()
+    # Execute the insert
+    cur.execute(sql, comment)
+    connection.commit()
+    # Return the ID
+    return cur.lastrowid
+
+
+def getComments(connection, courseID):
+    """
+    This function will return a list of all the comments for a particular course
+    """
+    # Create the command template
+    cur = connection.cursor()
+    # Execute the command
+    cur.execute(''' SELECT * FROM CourseComments WHERE CourseID = ? AND Flagged = 0''', (courseID,))
+    comments = cur.fetchall()
+    # Return the info
+    return comments

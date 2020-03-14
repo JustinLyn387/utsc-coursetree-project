@@ -91,15 +91,6 @@ def getPrereqs(course, connection):
     return listOfPre
 
 
-def parsePrereqs(prereqs):
-    """
-    This function is designed to parse the prerequisites
-    """
-
-
-# print(prereqTree("CSCA08H3"))
-
-
 def courseInfo(course):
     info = {}
     # Create the db connection
@@ -110,13 +101,17 @@ def courseInfo(course):
 
     # End the connection
     endConnection(connection)
-
     # Format the string return
+    info["id"] = courseInformation[0][0]
     info["desc"] = courseInformation[0][5]
     info["pre"] = courseInformation[0][6]
     info["ex"] = courseInformation[0][7]
     info["limit"] = courseInformation[0][8]
     info["breadth"] = courseInformation[0][9]
+    # Get unlocked courses
+    info["unlocked"] = unlockedCourses(course[0:8])
+    # Get the comments for the selected course
+    info["comments"] = getCourseComments(courseInformation[0][0])
 
     # Return JSON string
     return json.dumps(info, indent=4, separators=(',', ': '))
@@ -228,6 +223,93 @@ def setPageStatus(page):
     return json.dumps('Success')
 
 
+def dataLoad():
+    """
+    This method will load all the required data on initial load of the site
+    """
+    dataValues = []
+    convertedMessages = []
+    convertedNotes = []
+    # Create the db connection
+    connection = createConnection()
+    # Get the page locks
+    status = getPageLockStatus(connection, '*')
+    dataValues.append(status)
+    # Load up the messages and notes
+    messages = getDevMessages(connection)
+    # Convert the list of list to list of objects
+    for message in messages:
+        convertedMessages.append({'messageTitle': message[0], 'messageBody': message[1], 'date': message[2]})
+    dataValues.append(convertedMessages)
+    notes = getUpdateNotes(connection)
+    # Convert the list of list to list of objects
+    for note in notes:
+        convertedNotes.append({'noteTitle': note[0], 'noteBody': note[1], 'noteType': note[2], 'Colour': note[3], 'noteDate': note[4]})
+    dataValues.append(convertedNotes)
+    # End the connection and return status
+    endConnection(connection)
+    return json.dumps(dataValues)
+
+
+def saveMessage(message):
+    """
+    This method will save the posted message into the db
+    """
+    messageInfo = [message['messageTitle'], message['messageBody'], message['date']]
+    # Create the db connection
+    connection = createConnection()
+    # Save the message
+    success = insertMessage(connection, messageInfo)
+    # End the connection and return status
+    endConnection(connection)
+    return json.dumps('SUCCESS')
+
+
+def saveNote(note):
+    """
+    This method will save the published note into the db
+    """
+    noteInfo = [note['noteTitle'], note['noteBody'], note['noteType'], note['Colour'], note['noteDate']]
+    # Create the db connection
+    connection = createConnection()
+    # Save the message
+    success = insertNote(connection, noteInfo)
+    # End the connection and return status
+    endConnection(connection)
+    return json.dumps('SUCCESS')
+
+
+def saveComment(comment):
+    """
+    This method will save the comment into the db
+    """
+    commentData = [comment['courseid'], comment['course'], comment['comment'], 0, comment['recommend'], comment['difficulty'], comment['bird'], comment['user'], comment['date']]
+    # Create the db connection
+    connection = createConnection()
+    # Save the message
+    success = insertComment(connection, commentData)
+    # End the connection and return status
+    endConnection(connection)
+    return json.dumps('SUCCESS')
+
+
+def getCourseComments(courseID):
+    """
+    This method will get all the comments for a course
+    """
+    courseComments = []
+    # Create the db connection
+    connection = createConnection()
+    # Retrieve the comments
+    listOfComments = getComments(connection, courseID)
+    # Convert the list of list to list of objects
+    for comment in listOfComments:
+        courseComments.append({'comment': comment[3], 'recommend': comment[5], 'difficulty': comment[6], 'bird': comment[7], 'user': comment[8], 'date': comment[9]})
+    # End the connection and return status
+    endConnection(connection)
+    return courseComments
+
+
 def removeOld():
     """
     This function will remove all the courses that no longer exist
@@ -248,7 +330,7 @@ def removeOld():
             # Run a loop to start splicing/removing
             while counter > 0:
                 oldIndex = temp.index("/(")
-                newPrereq = temp[:oldIndex] + temp[oldIndex+12:]
+                newPrereq = temp[:oldIndex] + temp[oldIndex + 12:]
                 temp = newPrereq
                 counter -= 1
         # Additional check if necessary
@@ -266,21 +348,22 @@ def removeOld():
             updatePrereq(connection, (temp, prereq[0]))
 
 
-def unlockedCourses(prereq):
+def unlockedCourses(course):
     """
     This function will return a formatted list of all the courses that has the selected course as a prereq
     """
     # Create the db connection
     connection = createConnection()
     # Get the unlocked courses
-    unlocked = getUnlocked(connection, prereq)
+    unlocked = getUnlocked(connection, course)
+    # Concat a string return
+    courses = ''
     # Loop through the return
-    result = {"A": [], "B": [], "C": [], "D": []}
+    # result = {"A": [], "B": [], "C": [], "D": []}
     for course in unlocked:
-        item = (str(course).replace("'", "").replace(",", "").replace("(", "").replace(")", ""))
-        result[item[3]].append(item)
-
-    print(result)
-
-
-unlockedCourses("IDSA01H3")
+        # item = (str(course).replace("'", "").replace(",", "").replace("(", "").replace(")", ""))
+        # result[item[3]].append(item)
+        courses += course[0][0:8] + ', '
+    endConnection(connection)
+    # Return the list
+    return courses[0:len(courses)-2]

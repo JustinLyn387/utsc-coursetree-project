@@ -83,6 +83,9 @@
             <br><br>
             <h3>Breadth Requirement:</h3>
             {{ courseInfo.breadth }}
+            <br><br>
+            <h3>Future Course Outlook (Courses that use this course as a prerequisite):</h3>
+            {{ courseInfo.unlocked }}
           </div>
           <!-- If they haven't selected a course output a default message-->
           <div v-else class="emptyInfo">
@@ -94,7 +97,7 @@
         <v-container v-else class="pt-5 pr-0">
           <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
             <h2>View & Add Course Comments - {{ courseInfo.name.substring(0,8) }}</h2>
-            <small>*Note: Any offensive or profane comments will be removed and that user will lose comment access</small>
+            <small>*Note: Any offensive or profane comments will be removed and that user will lose the ability to create comments</small>
             <v-row>
               <v-container class="px-0 mx-0 py-0">
                 <v-container class="pa-0">
@@ -120,10 +123,18 @@
               </v-container>
             </v-row>
             <h3>{{ numOfComments }} Comments</h3>
+            <v-row v-if="this.numOfComments === 0" class="pt-12">
+              <v-col class="pt-8">
+                <h1 class="text-center">No Comments</h1>
+                <h3 class="text-center">It's quiet... too quiet...</h3>
+              </v-col>
+            </v-row>
             <v-row class="px-0 mx-0 commentList">
               <v-row v-for="(item) in courseComments.slice().reverse()" :key="item.user" class="comment">
                 <v-col class="pb-0">
-                  <h4>{{ item.user }}</h4>
+                  <v-row class="pl-3">
+                    <h4>{{ item.user }}</h4><h6 class="pl-3 pt-1">{{ item.date }}</h6>
+                  </v-row>
                   <v-row class="commentRatings py-0">
                     <v-col class="pt-0"><h5>Would Recommend: {{ item.recommend }}</h5></v-col>
                     <v-col class="pt-0"><h5>Content Difficulty: {{ item.difficulty }}</h5></v-col>
@@ -154,14 +165,18 @@ export default {
   data: () => ({
     tab: 'I',
     numOfComments: 5,
-    userComment: { user: 'TEST USER', difficulty: 0, bird: ' N/A ', recommend: ' N/A ', comment: '' },
+    userComment: { user: 'TEST USER', difficulty: 0, bird: ' N/A ', recommend: ' N/A ', comment: '', date: '', course: '', courseid: '' },
     // Course info object
-    courseInfo: { name: 'Select a course to view more information ...',
+    courseInfo: { id: '',
+      name: 'Select a course to view more information ...',
       desc: '',
       pre: '',
       excl: '',
       limit: '',
-      breadth: '' },
+      breadth: '',
+      unlocked: '' },
+    // Course comments
+    // courseComments: [],
     // Treeview course data
     items: [],
     selectedItems: [],
@@ -244,12 +259,20 @@ export default {
           .then(response => {
             let info = (response.data)
             // Fill the object with the course information to output
+            this.courseInfo.id = info.id
             this.courseInfo.name = courses.name
             this.courseInfo.desc = info.desc
             this.courseInfo.pre = info.pre
             this.courseInfo.excl = info.ex
             this.courseInfo.limit = info.limit
             this.courseInfo.breadth = info.breadth
+            if (info.unlocked.length === 0) {
+              this.courseInfo.unlocked = 'N/A'
+            } else {
+              this.courseInfo.unlocked = info.unlocked
+            }
+            this.courseComments = info.comments
+            this.numOfComments = this.courseComments.length
           })
           // Catch any errors
           .catch(e => {
@@ -277,9 +300,28 @@ export default {
       }
     },
     submitComment: function () {
+      // Fill out the date stamp and course information
+      this.userComment.date = new Date().toLocaleString()
+      this.userComment.courseid = this.courseInfo.id
+      this.userComment.course = this.courseInfo.name
       this.courseComments.push(this.userComment)
       this.numOfComments = this.courseComments.length
-      this.userComment = { user: 'TEST USER', difficulty: 0, bird: ' - ', recommend: ' - ', comment: '' }
+      // Save the comment in the database
+      let comment = { comment: this.userComment }
+      axios.post('http://127.0.0.1:5000/DataPosting/comment', comment)
+        .then(response => {
+          if (response.data === 'ERROR') {
+            this.showSnack('Error submitting comment!')
+          } else {
+            // Show snackbar confirmation
+            this.showSnack('Comment saved!')
+          }
+        })
+        .catch(e => {
+          this.showSnack('An error occurred!' + e)
+        })
+      // Reset
+      this.userComment = { user: 'TEST USER', difficulty: 0, bird: ' - ', recommend: ' - ', comment: '', date: '', course: '', courseid: '' }
     }
   }
 }
@@ -287,6 +329,9 @@ export default {
 </script>
 
 <style scoped>
+  h6{
+    color: grey;
+  }
   .dirSide{
     padding-top: 10px;
   }
@@ -322,9 +367,6 @@ export default {
   }
   .comment{
     min-width: 100%;
-  }
-  .commentRatings{
-    max-width: 85%;
   }
 
 </style>
