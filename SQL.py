@@ -209,27 +209,27 @@ def getUnlocked(connection, course):
     return unlocked
 
 
-def getPageLockStatus(connection, page):
+def getContentStatus(connection, page):
     """
     This function will return the lock status of the desired page
     """
     # Create the command template
     cur = connection.cursor()
     if page == '*':
-        cur.execute(''' SELECT Status FROM PageLocks ''')
+        cur.execute(''' SELECT Status FROM ContentLocks ''')
     else:
         # Execute the command
-        cur.execute(''' SELECT Status FROM PageLocks WHERE ID = ?''', (page,))
+        cur.execute(''' SELECT Status FROM ContentLocks WHERE ID = ?''', (page,))
     pageStatus = cur.fetchall()
     # Return the info
     return pageStatus
 
 
-def setPageLockStatus(connection, status):
+def setContentStatus(connection, status):
     """
     This function will return the lock status of the desired page
     """
-    sql = ''' UPDATE PageLocks SET Status = ? WHERE ID = ? '''
+    sql = ''' UPDATE ContentLocks SET Status = ? WHERE ID = ? '''
     cur = connection.cursor()
     # Execute the insert
     cur.execute(sql, status)
@@ -311,7 +311,10 @@ def getComments(connection, courseID):
     # Create the command template
     cur = connection.cursor()
     # Execute the command
-    cur.execute(''' SELECT * FROM CourseComments WHERE CourseID = ? AND Flagged = 0''', (courseID,))
+    if courseID != '*':
+        cur.execute(''' SELECT * FROM CourseComments WHERE CourseID = ? AND Flagged = 6603524 ''', (courseID,))
+    else:
+        cur.execute(''' SELECT * FROM CourseComments ''')
     comments = cur.fetchall()
     # Return the info
     return comments

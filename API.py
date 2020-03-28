@@ -65,12 +65,12 @@ class uploadedTranscript(Resource):
             return json.loads(json.dumps('ERROR'))
 
 
-class pageStatus(Resource):
-    def get(self, page):
-        return json.loads(DataRetrieval.getPageStatus(page))
+class contentLocks(Resource):
+    def get(self, content):
+        return json.loads(DataRetrieval.getContentLockStatus(content))
 
-    def post(self, page):
-        return json.loads(DataRetrieval.setPageStatus(page))
+    def post(self, content):
+        return json.loads(DataRetrieval.setContentLockStatus(content))
 
 
 class dataLoad(Resource):
@@ -99,7 +99,7 @@ api.add_resource(courseDirectory, '/DataRetrieval/directory')
 api.add_resource(courseInfo, '/DataRetrieval/courseInfo/<course>')
 api.add_resource(getCourses, '/DataRetrieval/courses/<withIDs>')
 api.add_resource(uploadedTranscript, '/DataPosting/transcript')
-api.add_resource(pageStatus, '/DataRetrieval/pageStatus/<page>')
+api.add_resource(contentLocks, '/DataRetrieval/contentLocks/<content>')
 api.add_resource(dataLoad, '/DataRetrieval/dataLoad')
 api.add_resource(saveRecord, '/DataPosting/record')
 api.add_resource(saveComment, '/DataPosting/comment')

@@ -13,11 +13,12 @@
         <!-- Page availability card section -->
         <v-row class="rowSeparators">
           <v-card class="cardStyles">
-            <h2>Page Availability</h2>
-            <p>Controls to disable or enable certain pages</p>
-            <v-row><v-switch v-model="coursePageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses</p></v-row>
-            <v-row><v-switch v-model="treeViewPageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView</p></v-row>
-            <v-row><v-switch v-model="infoPageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Info & Quick Links</p></v-row>
+            <h2>Content Locks</h2>
+            <p>Controls to toggle certain pages & features</p>
+            <v-row><v-switch v-model="coursePageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Courses Page</p></v-row>
+            <v-row><v-switch v-model="treeViewPageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">TreeView Page</p></v-row>
+            <v-row><v-switch v-model="infoPageStatus" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Links & Info Page</p></v-row>
+            <v-row><v-switch v-model="newUsers" class="mx-2 pageSwitch"></v-switch><p class="switchLabels">Allow new users</p></v-row>
           </v-card>
         </v-row>
         <!-- Data settings card section -->
@@ -30,6 +31,7 @@
               <v-btn class="my-2 dataButtons" color="warning" v-on:click="dataButton('Refresh')">Refresh Database</v-btn>
               <v-btn class="mr-2 dataButtons" color="error" v-on:click="dataButton('Redeploy')">Redeploy Website</v-btn>
               <v-btn class="my-2 dataButtons" color="deep-purple lighten-1" v-on:click="dataButton('Wipe')">Wipe User Data</v-btn>
+              <v-btn class="my-2 dataButtons" color="green accent-3" v-on:click="dataButton('Scan')">Scan Comments</v-btn>
             </div>
           </v-card>
         </v-row>
@@ -84,19 +86,22 @@
             <v-container class="contentContainer" v-else-if="this.tab==='U'">
               <!-- Using a datatable to display the user information -->
               <!-- Able to search the table and default sort is by users name -->
-              <v-data-table :headers="userHeaders" :items="users" sort-by="user" :search="search">
+              <v-data-table :headers="userHeaders" :items="users" sort-by="user" :search="userSearch">
                 <template v-slot:top>
                   <v-toolbar flat color="white">
                     <!-- Header section with the title and search bar -->
                     <v-toolbar-title><h3>Users</h3></v-toolbar-title>
                     <v-divider class="mx-4" inset vertical/>
-                    <v-text-field class="userSearch" v-model="search" label="Search for User" single-line hide-details/>
+                    <v-text-field class="userSearch" v-model="userSearch" label="Search for User" single-line hide-details/>
                     <!-- This is popup for when they want to edit a users details -->
                     <v-dialog v-model="dialog" max-width="500px">
+                      <template class="float-right" v-slot:activator="{ on }">
+                        <v-btn color="primary" dark class="mb-2 newUserButton" small v-on="on">New User</v-btn>
+                      </template>
                       <!-- Create the card with all the details and stuff -->
                       <v-card>
                         <v-card-title>
-                          <span class="headline">Edit User</span>
+                          <span class="headline">User Information</span>
                         </v-card-title>
                         <v-card-text>
                           <v-container>
@@ -130,23 +135,29 @@
             </v-container>
             <!-- Else if want to look at flagged comments -->
             <v-container class="contentContainer" v-else-if="this.tab==='C'">
-              <v-data-table :headers="commentHeaders" :items="flaggedComments" sort-by="date">
+              <v-data-table :headers="commentHeaders" :items="userComments" sort-by="date" :search="commentSearch">
                 <template v-slot:top>
                   <v-toolbar flat color="white">
                     <!-- Header section with the title and search bar -->
-                    <v-toolbar-title><h3>Flagged Comments</h3></v-toolbar-title>
+                    <v-toolbar-title><h3>User Comments</h3></v-toolbar-title>
+                    <v-divider class="mx-4" inset vertical/>
+                    <v-text-field class="userSearch" v-model="commentSearch" label="Search for comments" single-line hide-details/>
                   </v-toolbar>
                 </template>
                 <!-- Add in the edit and delete icons for each row in the table -->
                 <template v-slot:item.action="{ item }">
-                  <v-col class="py-2">
-                    <v-row class="pb-2">
-                      <a><v-btn small color="red accent-3" class="actionButtons" v-on:click="removeAndFlag(item)">Action</v-btn></a>
-                    </v-row>
-                    <v-row>
-                      <a><v-btn small color="green accent-3" class="actionButtons" v-on:click="uflag(item)">Unflag</v-btn></a>
-                    </v-row>
-                  </v-col>
+
+                  <v-menu transition="slide-y-transition" :offset-y="true" bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn small class="settingsIcon" v-on="on" color="red accent-3">Action</v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item v-for="(option, i) in settingsOptions" :key="i" @click="commentAction(option.action, item)">
+                        <v-list-item-title class="popupMenu">{{ option.option }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+
+                  </v-menu>
                 </template>
               </v-data-table>
             </v-container>
@@ -191,6 +202,10 @@ import axios from 'axios'
 export default {
   name: 'AdminPage',
   data: () => ({
+    settingsOptions: [
+      { option: 'Flag', action: 'flag' },
+      { option: 'Unflag', action: 'unflag' }
+    ],
     tab: 'A',
     message: { messageTitle: '', messageBody: '', date: '' },
     note: { noteTitle: '', noteBody: '', noteDate: '', noteType: '', Colour: '' },
@@ -201,45 +216,44 @@ export default {
       ['', ''], ['CSCA08H3', 40], ['MATA37H3', 10], ['CSCD58H3', 25], ['CSCD27H3', 20], ['LINA01H3', 5]
     ],
     dialog: false,
-    search: '',
+    userSearch: '',
+    commentSearch: '',
     userHeaders: [
       { text: 'User', align: 'left', value: 'user' },
       { text: 'Access Level', value: 'lvl' },
       { text: 'Last Login', value: 'login' },
+      { text: 'Account Created', value: 'created' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
     users: [
-      { user: 'Justin', lvl: 'Admin', login: 'Jan 1/2020' },
-      { user: 'RAHOOOOOOL', lvl: 'Admin', login: 'Jan 2/2020' },
-      { user: 'BOB', lvl: 'User', login: 'Jan 4/2020' },
-      { user: 'Ashley', lvl: 'User', login: 'Jan 23/2020' },
-      { user: 'Test1', lvl: 'Admin', login: 'Jan 5/2020' },
-      { user: 'Test2', lvl: 'Admin', login: 'Jan 4/2020' },
-      { user: 'Test3', lvl: 'Admin', login: 'Jan 18/2020' },
-      { user: 'Test4', lvl: 'Admin', login: 'Jan 22/2020' },
-      { user: 'Michael', lvl: 'User', login: 'Jan 3/2020' }
+      { user: 'Justin', lvl: 3, login: 'Jan 1/2020', created: 'Jan 1/2020' },
+      { user: 'RAHOOOOOOL', lvl: 3, login: 'Jan 2/2020', created: 'Jan 1/2020' },
+      { user: 'BOB', lvl: 2, login: 'Jan 4/2020', created: 'Jan 1/2020' },
+      { user: 'Ashley', lvl: 1, login: 'Jan 23/2020', created: 'Jan 1/2020' },
+      { user: 'Test1', lvl: 3, login: 'Jan 5/2020', created: 'Jan 1/2020' },
+      { user: 'Test2', lvl: 3, login: 'Jan 4/2020', created: 'Jan 1/2020' },
+      { user: 'Test3', lvl: 3, login: 'Jan 18/2020', created: 'Jan 1/2020' },
+      { user: 'Test4', lvl: 2, login: 'Jan 22/2020', created: 'Jan 1/2020' },
+      { user: 'Michael', lvl: 2, login: 'Jan 3/2020', created: 'Jan 1/2020' }
     ],
     editedIndex: -1,
     editedItem: { user: '', lvl: '', login: '' },
     defaultItem: { user: '', lvl: '', login: '' },
     commentHeaders: [
-      { text: 'CID', align: 'left', value: 'cid' },
-      { text: 'User', value: 'user' },
+      { text: 'Course', align: 'left', value: 'course' },
       { text: 'Comment', value: 'comment' },
+      { text: 'User', value: 'user' },
       { text: 'Date', value: 'date' },
+      { text: 'Flag', value: 'flagged' },
+      { text: 'Rep', value: 'flaggedby' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    flaggedComments: [
-      { cid: 'C000001', user: 'Justin', comment: 'FUDGE FUDGE FUDGE FUDGE FUDGE', date: 'Jan 1/2020' },
-      { cid: 'C000002', user: 'RAHOOOOOOL', comment: 'SHIP SHIP SHIP', date: 'Jan 2/2020' },
-      { cid: 'C000003', user: 'BOB', comment: 'jub jub jub ship', date: 'Jan 4/2020' },
-      { cid: 'C000004', user: 'Ashley', comment: 'What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah What tblah blah What the jub jub are you fudging blah blah blah What tblah blah What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah What the jub jub are you fudging blah blah blah', date: 'Jan 23/2020' },
-      { cid: 'C000005', user: 'Test1', comment: 'FUDGE BLAH BLAH', date: 'Jan 5/2020' },
-      { cid: 'C000006', user: 'Test2', comment: 'SHIPWRECK BLUB BLAH JUB JUB', date: 'Jan 4/2020' },
-      { cid: 'C000007', user: 'Test3', comment: 'k', date: 'Jan 18/2020' }
-    ],
+    userComments: [],
     snackMessage: { activate: false, message: null, timeout: 3000 }
   }),
+  created () {
+    this.userComments = this.$store.state.userComments
+  },
   methods: {
     // Method to toggle which container to show (Analytics or Users)
     selectedTab (tab) {
@@ -338,6 +352,11 @@ export default {
       } else {
         this.showSnack('Deleted all users!')
       }
+    },
+    commentAction (action, comment) {
+      if (action === 'flag') {
+        console.log(comment)
+      }
     }
   },
   watch: {
@@ -352,7 +371,7 @@ export default {
       },
       set () {
         this.$store.commit('coursePageToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/pageStatus/1')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/1')
           .then(response => {
             if (response.data === 'Success') {
               this.showSnack('Course directory page toggled!')
@@ -369,7 +388,7 @@ export default {
       },
       set () {
         this.$store.commit('treePageToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/pageStatus/2')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/2')
           .then(response => {
             if (response.data === 'Success') {
               this.showSnack('TreeView page toggled!')
@@ -386,10 +405,27 @@ export default {
       },
       set () {
         this.$store.commit('infoPageToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/pageStatus/3')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/3')
           .then(response => {
             if (response.data === 'Success') {
               this.showSnack('Info & Links page toggled!')
+            }
+          })
+          .catch(e => {
+            this.showSnack('ERROR Occurred: ' + e)
+          })
+      }
+    },
+    newUsers: {
+      get () {
+        return this.$store.state.newUsers
+      },
+      set () {
+        this.$store.commit('newUsersToggle')
+        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/4')
+          .then(response => {
+            if (response.data === 'Success') {
+              this.showSnack('New users toggled!')
             }
           })
           .catch(e => {
@@ -471,10 +507,10 @@ export default {
     font-size: 13pt;
     font-weight: bold;
   }
-  .actionButtons{
-    width: 80px;
-  }
   .snackMessage{
     color: black;
+  }
+  .newUserButton{
+    margin-left: 55%;
   }
 </style>

@@ -165,7 +165,7 @@ export default {
   data: () => ({
     tab: 'I',
     numOfComments: 5,
-    userComment: { user: 'TEST USER', difficulty: 0, bird: ' N/A ', recommend: ' N/A ', comment: '', date: '', course: '', courseid: '' },
+    userComment: { user: 'RiceBoy', difficulty: 0, bird: ' N/A ', recommend: ' N/A ', comment: '', date: '', course: '', courseid: '' },
     // Course info object
     courseInfo: { id: '',
       name: 'Select a course to view more information ...',
@@ -321,7 +321,7 @@ export default {
           this.showSnack('An error occurred!' + e)
         })
       // Reset
-      this.userComment = { user: 'TEST USER', difficulty: 0, bird: ' - ', recommend: ' - ', comment: '', date: '', course: '', courseid: '' }
+      this.userComment = { user: 'RiceBoy', difficulty: 0, bird: ' - ', recommend: ' - ', comment: '', date: '', course: '', courseid: '' }
     }
   }
 }

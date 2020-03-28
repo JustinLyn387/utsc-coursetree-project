@@ -7,13 +7,16 @@
           <v-card class="cardStyles">
             <div class="pageHeader">
               <h1> - Dashboard - </h1>
-              <p class="dashSubhead">User overview, manage taken courses, and ...</p>
+              <p class="dashSubhead">User overview, and manage taken courses</p>
             </div>
           </v-card>
         </v-row>
         <v-row class="rowSeparator">
           <v-card class="cardStyles">
-            <h2> - IDK - </h2>
+            <h2 class="pageHeader"> - Account Info - </h2>
+            <h4>Account Created: date</h4>
+            <h4>Access Level: -1</h4>
+            <v-btn class="deleteButton" color="error">Delete Account</v-btn>
           </v-card>
         </v-row>
       </v-col>
@@ -21,13 +24,26 @@
         <v-row class="rowSeparator">
           <v-card class="cardStyles">
             <v-tabs background-color="transparent" color="primary" grow>
-              <v-tab v-on:click="switchTab('O')"><b>Overview</b></v-tab>
               <v-tab v-on:click="switchTab('TC')"><b>Taken Courses</b></v-tab>
-              <v-tab><b>IDK</b></v-tab>
-              <v-tab><b>IDK</b></v-tab>
+              <v-tab v-on:click="switchTab('CP')"><b>Planner</b></v-tab>
             </v-tabs>
-            <v-container v-if="this.tab === 'Overview'" class="mainContent">
-              <v-btn class="deleteButton" color="error">Delete Account</v-btn>
+            <v-container v-if="this.tab === 'CoursePlan'" class="mainContent">
+              <v-col>
+                <v-row>
+                  <h2>Projected Graduation: SUMMER 2022</h2>
+                </v-row>
+                <v-row>
+                  <v-col class="px-0">
+                    <h3>Possible Sequencing:</h3>
+                    <p>Test</p>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="px-0">
+                    <h3>Progress: /20.0 Credits</h3>
+                  </v-col>
+                </v-row>
+              </v-col>
             </v-container>
             <v-container v-else-if="this.tab === 'Taken'" class="mainContent">
               <h2>Taken Courses</h2>
@@ -72,7 +88,7 @@ export default {
     TextSampleModal
   },
   data: () => ({
-    tab: 'Overview',
+    tab: 'Taken',
     file: '',
     courseHeaders: [
       { text: 'Course Code', align: 'left', value: 'code' },
@@ -94,8 +110,8 @@ export default {
   }),
   methods: {
     switchTab (tab) {
-      if (tab === 'O') {
-        this.tab = 'Overview'
+      if (tab === 'CP') {
+        this.tab = 'CoursePlan'
       } else if (tab === 'TC') {
         this.tab = 'Taken'
       }

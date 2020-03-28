@@ -192,32 +192,32 @@ def getAllCourses(switch):
     return json.dumps(courses, indent=4, separators=(',', ': '))
 
 
-def getPageStatus(page):
+def getContentLockStatus(content):
     """
     This method will return the status of the desired page
     """
     # Create the db connection
     connection = createConnection()
     # Get the status
-    status = getPageLockStatus(connection, page)
+    status = getContentStatus(connection, content)
     # End the connection and return status
     endConnection(connection)
     return json.dumps(status)
 
 
-def setPageStatus(page):
+def setContentLockStatus(content):
     """
     This method will return the status of the desired page
     """
     # Create the db connection
     connection = createConnection()
     # Get the status
-    status = getPageLockStatus(connection, page)
+    status = getContentStatus(connection, content)
     # Flip the status
     if status[0][0] == 1:
-        status = setPageLockStatus(connection, (0, page))
+        status = setContentStatus(connection, (0, content))
     else:
-        status = setPageLockStatus(connection, (1, page))
+        status = setContentStatus(connection, (1, content))
     # End the connection and return status
     endConnection(connection)
     return json.dumps('Success')
@@ -230,22 +230,30 @@ def dataLoad():
     dataValues = []
     convertedMessages = []
     convertedNotes = []
+    convertedComments = []
     # Create the db connection
     connection = createConnection()
     # Get the page locks
-    status = getPageLockStatus(connection, '*')
+    status = getContentStatus(connection, '*')
     dataValues.append(status)
-    # Load up the messages and notes
+    # Load up the messages
     messages = getDevMessages(connection)
     # Convert the list of list to list of objects
     for message in messages:
         convertedMessages.append({'messageTitle': message[0], 'messageBody': message[1], 'date': message[2]})
     dataValues.append(convertedMessages)
+    # Load up the dev notes
     notes = getUpdateNotes(connection)
     # Convert the list of list to list of objects
     for note in notes:
         convertedNotes.append({'noteTitle': note[0], 'noteBody': note[1], 'noteType': note[2], 'Colour': note[3], 'noteDate': note[4]})
     dataValues.append(convertedNotes)
+    # Load the user comments
+    comments = getComments(connection, '*')
+    # Convert the list of list to list of objects
+    for comment in comments:
+        convertedComments.append({'course': comment[2][0:8], 'comment': comment[3], 'user': comment[7], 'date': comment[8][0:comment[8].index(',')], 'flagged': comment[9], 'flaggedby': comment[10]})
+    dataValues.append(convertedComments)
     # End the connection and return status
     endConnection(connection)
     return json.dumps(dataValues)
@@ -283,7 +291,7 @@ def saveComment(comment):
     """
     This method will save the comment into the db
     """
-    commentData = [comment['courseid'], comment['course'], comment['comment'], 0, comment['recommend'], comment['difficulty'], comment['bird'], comment['user'], comment['date']]
+    commentData = [comment['courseid'], comment['course'], comment['comment'], 6603524, comment['recommend'], comment['difficulty'], comment['bird'], comment['user'], comment['date']]
     # Create the db connection
     connection = createConnection()
     # Save the message
@@ -304,7 +312,7 @@ def getCourseComments(courseID):
     listOfComments = getComments(connection, courseID)
     # Convert the list of list to list of objects
     for comment in listOfComments:
-        courseComments.append({'comment': comment[3], 'recommend': comment[5], 'difficulty': comment[6], 'bird': comment[7], 'user': comment[8], 'date': comment[9]})
+        courseComments.append({'comment': comment[3], 'recommend': comment[4], 'difficulty': comment[5], 'bird': comment[6], 'user': comment[7], 'date': comment[8]})
     # End the connection and return status
     endConnection(connection)
     return courseComments
