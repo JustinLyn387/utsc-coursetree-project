@@ -1,5 +1,6 @@
 <template>
   <v-container class="mainContainer">
+    <FeedbackModal/>
     <v-row class="mainRow">
       <v-col class="mainCol">
         <v-card shaped class="feedbackCard">
@@ -23,7 +24,7 @@
                     <v-flex>
                       <!--- v-flex is centered now, but we need to center button inside v-flex -->
                       <div class="text-xs-center">
-                        <v-btn class="mr-3" color="green accent-3">Feedback Form</v-btn>
+                        <v-btn class="mr-3 feedbackButton" color="green accent-3" v-on:click="$modal.show('feedbackPopup')">Feedback Form</v-btn>
                         <v-btn class="ml-3" color="primary">Submit Rating</v-btn>
                       </div>
                     </v-flex>
@@ -90,8 +91,13 @@
 </template>
 
 <script>
+import FeedbackModal from './FeedbackModal'
+
 export default {
   name: 'NewsFeedbackPage',
+  components: {
+    FeedbackModal
+  },
   data: () => ({
     side: true,
     rating: 4.5,

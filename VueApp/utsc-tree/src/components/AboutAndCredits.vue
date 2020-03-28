@@ -30,7 +30,7 @@
               <v-col class="teamCols">
                 <img src="../assets/uoft-logo.png" height="200" width="200"/>
                 <h2>Justin Lyn</h2>
-                <p>Co-Founder & Front-End Engineer</p>
+                <p>Co-Founder & Full Stack Developer</p>
               </v-col>
               <v-col class="teamCols">
                 <img src="../assets/uoft-logo.png" height="200" width="200"/>

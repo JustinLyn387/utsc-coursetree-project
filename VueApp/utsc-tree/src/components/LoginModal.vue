@@ -18,7 +18,9 @@
           </div>
 
           <div class="registerOp">
-            <a class="regText">Don't have an account? </a><a v-on:click="registerUser">  Sign Up!</a>
+            <a class="regText">Don't have an account? </a>
+            <a v-if="this.$store.state.newUsers" v-on:click="registerUser">  Sign Up!</a>
+            <a v-else class="text--disabled">  Sign Up!</a>
           </div>
         </div>
 
