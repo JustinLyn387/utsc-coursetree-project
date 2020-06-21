@@ -97,9 +97,9 @@
         <v-container v-else class="pt-5 pr-0">
           <div v-if="courseInfo.name !== 'Select a course to view more information ...'">
             <h2>View & Add Course Comments - {{ courseInfo.name.substring(0,8) }}</h2>
-            <small>*Note: Any offensive or profane comments will be removed and that user will lose the ability to create comments</small>
             <v-row>
-              <v-container class="px-0 mx-0 py-0">
+              <v-container v-if="this.$store.state.user.access >= 2" class="px-0 mx-0 py-0">
+                <small class="pl-3">*Note: Any offensive comments will be removed and that user will lose the ability to create comments</small>
                 <v-container class="pa-0">
                   <v-row>
                     <v-col cols="12" sm="6" md="4" class="pb-0">
@@ -122,7 +122,7 @@
                 </v-card-actions>
               </v-container>
             </v-row>
-            <h3>{{ numOfComments }} Comments</h3>
+            <h3 class="py-4">{{ numOfComments }} Comments</h3>
             <v-row v-if="this.numOfComments === 0" class="pt-12">
               <v-col class="pt-8">
                 <h1 class="text-center">No Comments</h1>

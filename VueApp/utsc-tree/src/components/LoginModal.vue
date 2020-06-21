@@ -9,12 +9,15 @@
               <input v-model="credentials.email" class="input" type="email" placeholder="E-mail">
             </div>
           </div>
-
           <div>
-            <input v-model="credentials.password1" class="input" type="password" placeholder="Password"  v-on:keyup.enter="doStuff">
+            <input v-model="credentials.password1" class="input" type="password" placeholder="Password"  v-on:keyup.enter="login">
           </div>
-          <div class="text-center">
-            <v-btn color="primary" v-on:click="doStuff">Sign In</v-btn>
+          <div>
+            <p class="pt-2" v-if="this.$store.state.authError.error">{{ this.$store.state.authError.message }}</p>
+          </div>
+
+          <div v-bind:class="{'text-center': !this.$store.state.authError.error, 'textWithError': this.$store.state.authError.error}">
+            <v-btn color="primary" v-on:click="login">Sign In</v-btn>
           </div>
 
           <div class="registerOp">
@@ -33,11 +36,15 @@
             <input v-model="credentials.password1" class="input" type="password" placeholder="Password">
           </div>
           <div>
-            <input v-model="credentials.password2" class="input" type="password" placeholder="Confirm Password"  v-on:keyup.enter="doStuff" v-on:keyup="checkValidity">
+            <input v-model="credentials.password2" class="input" type="password" placeholder="Confirm Password"  v-on:keyup.enter="signup" v-on:keyup="checkValidity">
+          </div>
+          <div>
+            <p class="pt-2" v-if="this.$store.state.authError.error">{{ this.$store.state.authError.message }}</p>
+            <p v-else></p>
           </div>
 
-          <div class="text-center">
-            <v-btn v-if="validCredentials" color="primary" v-on:click="doStuff">Sign Up</v-btn>
+          <div v-bind:class="{'text-center': !this.$store.state.authError.error, 'textWithError': this.$store.state.authError.error}">
+            <v-btn v-if="validCredentials" color="primary" v-on:click="signup">Sign Up</v-btn>
             <v-btn v-else disabled>Sign Up</v-btn>
           </div>
           <div class="registerOp">
@@ -52,6 +59,7 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 
 export default {
   name: 'LoginModal',
@@ -63,14 +71,45 @@ export default {
   methods: {
     registerUser () {
       this.completeLogin = !this.completeLogin
+      this.$store.commit('resetAuthError')
     },
-    doStuff () {
-      if (this.credentials.password1 !== this.credentials.password2) {
-        this.validCredentials = false
-        alert("Passwords don't match!")
-      } else {
-        alert('Email: ' + this.credentials.email + '\nPassword: ' + this.credentials.password1)
-      }
+    signup () {
+      // Use firebase to login the user with password and email
+      firebase.auth()
+        .createUserWithEmailAndPassword(this.credentials.email, this.credentials.password2)
+        .then(data => {
+          // Log them in after they have been created
+          this.login()
+          // Create firestore entry for the new user
+          firebase.firestore().collection('users').doc(data.user.uid).set({
+            uid: data.user.uid,
+            email: data.user.email,
+            createdOn: data.user.metadata.creationTime,
+            lastLogin: data.user.metadata.creationTime
+          })
+        })
+        // output error message if any
+        .catch(err => {
+          this.$store.state.authError.error = true
+          this.$store.state.authError.message = err.message
+        })
+    },
+    login () {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.credentials.email, this.credentials.password1)
+        .then(data => {
+          this.$modal.hide('loginPopup')
+          // Update the last login time in firestore
+          firebase.firestore().collection('users').doc(data.user.uid).update({
+            lastLogin: data.user.metadata.lastSignInTime
+          })
+        })
+        // output error message if any
+        .catch(err => {
+          this.$store.state.authError.error = true
+          this.$store.state.authError.message = err.message
+        })
     },
     checkValidity () {
       this.validCredentials = this.credentials.password1 === this.credentials.password2
@@ -84,6 +123,10 @@ export default {
     color: grey;
     padding-bottom: 55px;
     padding-top: 20px;
+  }
+  p{
+    color: red;
+    font-size: 14px;
   }
   label{
     padding-right: 15px;
@@ -103,6 +146,10 @@ export default {
   }
   .text-center{
     padding-top: 55px;
+  }
+  .textWithError{
+    text-align: center;
+    padding-top: 25px;
   }
   .input {
     background-color: transparent;

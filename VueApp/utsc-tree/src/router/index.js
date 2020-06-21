@@ -16,49 +16,49 @@ const router = new VueRouter({
       path: '/',
       name: 'home',
       component: Home,
-      meta: { title: 'Home | UTSC CourseTree' }
+      meta: { title: 'Home | UTSC CourseTree', access: 0 }
     },
     {
       path: '/courses',
       name: 'courses',
       component: () => import('../views/Courses.vue'),
-      meta: { title: 'Directory | UTSC CourseTree' }
+      meta: { title: 'Directory | UTSC CourseTree', access: 0 }
     },
     {
       path: '/treeview',
       name: 'treeview',
       component: () => import('../views/TreeView.vue'),
-      meta: { title: 'TreeView | UTSC CourseTree' }
+      meta: { title: 'TreeView | UTSC CourseTree', access: 0 }
     },
     {
       path: '/information',
       name: 'information',
       component: () => import('../views/Information.vue'),
-      meta: { title: 'Links & Info | UTSC CourseTree' }
+      meta: { title: 'Links & Info | UTSC CourseTree', access: 0 }
     },
     {
       path: '/admin',
       name: 'admin',
       component: () => import('../views/Admin.vue'),
-      meta: { title: 'ADMIN | UTSC CourseTree' }
+      meta: { title: 'ADMIN | UTSC CourseTree', access: 3 }
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/Dashboard.vue'),
-      meta: { title: 'Dashboard | UTSC CourseTree' }
+      meta: { title: 'Dashboard | UTSC CourseTree', access: 1 }
     },
     {
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutUs.vue'),
-      meta: { title: 'About Us | UTSC CourseTree' }
+      meta: { title: 'About Us | UTSC CourseTree', access: 0 }
     },
     {
       path: '/feedback',
       name: 'feedback',
       component: () => import('../views/Feedback.vue'),
-      meta: { title: 'Feedback & Updates | UTSC CourseTree' }
+      meta: { title: 'Feedback & Updates | UTSC CourseTree', access: 0 }
     },
     {
       path: '*',
@@ -69,15 +69,20 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // First load the page lock data from db then determine
-  store.dispatch('loadStore').then(() => {
-    if (to.fullPath === '/courses' && !store.state.coursePage) {
-      next('/')
-    } else if (to.fullPath === '/treeview' && !store.state.treeViewPage) {
-      next('/')
-    } else if (to.fullPath === '/information' && !store.state.infoPage) {
-      next('/')
+  store.dispatch('loadLocks').then(() => {
+    // If the user has access to the page proceed to check locks otherwise ignore
+    if (to.meta.access <= store.state.user.access) {
+      if (to.fullPath === '/courses' && !store.state.coursePage) {
+        next('/')
+      } else if (to.fullPath === '/treeview' && !store.state.treeViewPage) {
+        next('/')
+      } else if (to.fullPath === '/information' && !store.state.infoPage) {
+        next('/')
+      } else {
+        next()
+      }
     } else {
-      next()
+      alert('Unauthorized!')
     }
   })
 })
