@@ -2,6 +2,7 @@ node_modules/
 .vscode
 venv/
 *.pic
+.env
 .jscramblerrc
 .idea/
 __pycache__/

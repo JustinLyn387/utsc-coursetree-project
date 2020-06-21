@@ -29,9 +29,10 @@
             <div class="buttonCluster">
               <v-btn class="mr-2 dataButtons" color="primary" v-on:click="dataButton('Reset')">Reset Analytics</v-btn>
               <v-btn class="my-2 dataButtons" color="warning" v-on:click="dataButton('Refresh')">Refresh Database</v-btn>
-              <v-btn class="mr-2 dataButtons" color="error" v-on:click="dataButton('Redeploy')">Redeploy Website</v-btn>
+              <v-btn class="mr-2 dataButtons" color="red" v-on:click="dataButton('Redeploy')">Redeploy Website</v-btn>
               <v-btn class="my-2 dataButtons" color="deep-purple lighten-1" v-on:click="dataButton('Wipe')">Wipe User Data</v-btn>
-              <v-btn class="my-2 dataButtons" color="green accent-3" v-on:click="dataButton('Scan')">Scan Comments</v-btn>
+              <v-btn class="mr-2 dataButtons" color="green accent-3" v-on:click="dataButton('Scan')">Scan Comments</v-btn>
+              <v-btn class="my-2 dataButtons" color="pink accent-3" v-on:click="dataButton('Scan')">Idk Yet</v-btn>
             </div>
           </v-card>
         </v-row>
@@ -95,9 +96,6 @@
                     <v-text-field class="userSearch" v-model="userSearch" label="Search for User" single-line hide-details/>
                     <!-- This is popup for when they want to edit a users details -->
                     <v-dialog v-model="dialog" max-width="500px">
-                      <template class="float-right" v-slot:activator="{ on }">
-                        <v-btn color="primary" dark class="mb-2 newUserButton" small v-on="on">New User</v-btn>
-                      </template>
                       <!-- Create the card with all the details and stuff -->
                       <v-card>
                         <v-card-title>
@@ -199,6 +197,7 @@
 
 <script>
 import axios from 'axios'
+import firebase from 'firebase'
 export default {
   name: 'AdminPage',
   data: () => ({
@@ -219,26 +218,16 @@ export default {
     userSearch: '',
     commentSearch: '',
     userHeaders: [
+      { text: 'uID', value: 'uid' },
       { text: 'User', align: 'left', value: 'user' },
-      { text: 'Access Level', value: 'lvl' },
       { text: 'Last Login', value: 'login' },
       { text: 'Account Created', value: 'created' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    users: [
-      { user: 'Justin', lvl: 3, login: 'Jan 1/2020', created: 'Jan 1/2020' },
-      { user: 'RAHOOOOOOL', lvl: 3, login: 'Jan 2/2020', created: 'Jan 1/2020' },
-      { user: 'BOB', lvl: 2, login: 'Jan 4/2020', created: 'Jan 1/2020' },
-      { user: 'Ashley', lvl: 1, login: 'Jan 23/2020', created: 'Jan 1/2020' },
-      { user: 'Test1', lvl: 3, login: 'Jan 5/2020', created: 'Jan 1/2020' },
-      { user: 'Test2', lvl: 3, login: 'Jan 4/2020', created: 'Jan 1/2020' },
-      { user: 'Test3', lvl: 3, login: 'Jan 18/2020', created: 'Jan 1/2020' },
-      { user: 'Test4', lvl: 2, login: 'Jan 22/2020', created: 'Jan 1/2020' },
-      { user: 'Michael', lvl: 2, login: 'Jan 3/2020', created: 'Jan 1/2020' }
-    ],
+    users: [],
     editedIndex: -1,
-    editedItem: { user: '', lvl: '', login: '' },
-    defaultItem: { user: '', lvl: '', login: '' },
+    editedItem: { user: '', lvl: '' },
+    defaultItem: { user: '', lvl: '' },
     commentHeaders: [
       { text: 'Course', align: 'left', value: 'course' },
       { text: 'Comment', value: 'comment' },
@@ -252,12 +241,22 @@ export default {
     snackMessage: { activate: false, message: null, timeout: 3000 }
   }),
   created () {
+    // Get the user comments from the store
     this.userComments = this.$store.state.userComments
   },
   methods: {
     // Method to toggle which container to show (Analytics or Users)
     selectedTab (tab) {
       this.tab = tab
+      if (this.tab === 'U' && this.users.length === 0) {
+        // Load the users from firestore
+        firebase.firestore().collection('users').onSnapshot(snapshot => {
+          snapshot.docs.forEach(doc => {
+            let dummyEntry = { user: doc.data().email, uid: doc.data().uid, login: doc.data().lastLogin, created: doc.data().createdOn }
+            this.users.push(dummyEntry)
+          })
+        })
+      }
     },
     // This method is for when they want to edit a users info. Get the index of user assign new vals and close popup
     editItem (item) {
@@ -282,6 +281,19 @@ export default {
     save () {
       if (this.editedIndex > -1) {
         Object.assign(this.users[this.editedIndex], this.editedItem)
+        // Check what the access level is
+        if (this.editedItem.lvl === '3') {
+          // Add admin to custom claim for the user
+          let addAdminRole = firebase.functions().httpsCallable('addAdminRole')
+          addAdminRole({ email: this.editedItem.user }).then(result => {
+            this.showSnack('ADMIN role granted!')
+          })
+        } else if (this.editedItem.lvl === '1') {
+          let addFlaggedUser = firebase.functions().httpsCallable('addFlaggedUser')
+          addFlaggedUser({ email: this.editedItem.user }).then(result => {
+            this.showSnack('User was flagged!')
+          })
+        }
       } else {
         this.users.push(this.editedItem)
       }
@@ -355,7 +367,7 @@ export default {
     },
     commentAction (action, comment) {
       if (action === 'flag') {
-        console.log(comment)
+        // console.log(comment)
       }
     }
   },
@@ -370,16 +382,14 @@ export default {
         return this.$store.state.coursePage
       },
       set () {
-        this.$store.commit('coursePageToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/1')
-          .then(response => {
-            if (response.data === 'Success') {
-              this.showSnack('Course directory page toggled!')
-            }
-          })
-          .catch(e => {
-            this.showSnack('ERROR Occurred: ' + e)
-          })
+        // Update firestore value
+        firebase.firestore().collection('contentLocks').doc('courseDirectory').update({
+          status: !this.$store.state.coursePage
+        }).then(response => {
+          this.showSnack('Course Directory page toggled!')
+        }).catch(e => {
+          this.showSnack('ERROR Occurred: ' + e.message)
+        })
       }
     },
     treeViewPageStatus: {
@@ -387,16 +397,14 @@ export default {
         return this.$store.state.treeViewPage
       },
       set () {
-        this.$store.commit('treePageToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/2')
-          .then(response => {
-            if (response.data === 'Success') {
-              this.showSnack('TreeView page toggled!')
-            }
-          })
-          .catch(e => {
-            this.showSnack('ERROR Occurred: ' + e)
-          })
+        // Update firestore value
+        firebase.firestore().collection('contentLocks').doc('treeView').update({
+          status: !this.$store.state.treeViewPage
+        }).then(response => {
+          this.showSnack('TreeView page toggled!')
+        }).catch(e => {
+          this.showSnack('ERROR Occurred: ' + e.message)
+        })
       }
     },
     infoPageStatus: {
@@ -404,16 +412,14 @@ export default {
         return this.$store.state.infoPage
       },
       set () {
-        this.$store.commit('infoPageToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/3')
-          .then(response => {
-            if (response.data === 'Success') {
-              this.showSnack('Info & Links page toggled!')
-            }
-          })
-          .catch(e => {
-            this.showSnack('ERROR Occurred: ' + e)
-          })
+        // Update firestore value
+        firebase.firestore().collection('contentLocks').doc('infoLinks').update({
+          status: !this.$store.state.infoPage
+        }).then(response => {
+          this.showSnack('Info & Links page toggled!')
+        }).catch(e => {
+          this.showSnack('ERROR Occurred: ' + e.message)
+        })
       }
     },
     newUsers: {
@@ -421,16 +427,14 @@ export default {
         return this.$store.state.newUsers
       },
       set () {
-        this.$store.commit('newUsersToggle')
-        axios.post('http://127.0.0.1:5000/DataRetrieval/contentLocks/4')
-          .then(response => {
-            if (response.data === 'Success') {
-              this.showSnack('New users toggled!')
-            }
-          })
-          .catch(e => {
-            this.showSnack('ERROR Occurred: ' + e)
-          })
+        // Update firestore value
+        firebase.firestore().collection('contentLocks').doc('newUsers').update({
+          status: !this.$store.state.newUsers
+        }).then(response => {
+          this.showSnack('New users function toggled!')
+        }).catch(e => {
+          this.showSnack('ERROR Occurred: ' + e.message)
+        })
       }
     }
   }

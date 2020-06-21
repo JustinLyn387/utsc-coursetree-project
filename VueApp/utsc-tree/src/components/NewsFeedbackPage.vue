@@ -44,7 +44,7 @@
                     <!-- Loop through the array to populate the feed and create the list items -->
                     <v-list two-line class="feedList">
                       <v-list-item-group>
-                        <template v-for="(item, index) in devMessages">
+                        <template v-for="(item, index) in devMessages.slice().reverse()">
                           <v-list-item :key="item.messageTitle">
                             <v-list-item-content>
                               <h4 v-text="item.messageTitle"></h4>

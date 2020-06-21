@@ -14,9 +14,9 @@
         <v-row class="rowSeparator">
           <v-card class="cardStyles">
             <h2 class="pageHeader"> - Account Info - </h2>
-            <h4>Account Created: date</h4>
-            <h4>Access Level: -1</h4>
-            <v-btn class="deleteButton" color="error">Delete Account</v-btn>
+            <h4>Account Created:</h4>
+            <h4>Access Level: {{ this.$store.state.user.access }}</h4>
+            <v-btn class="deleteButton" color="error" @click="deleteAccount">Delete Account</v-btn>
           </v-card>
         </v-row>
       </v-col>
@@ -82,6 +82,7 @@
 import TextSampleModal from './TextSampleModal'
 // Import axios since using APIs to fetch and send data
 import axios from 'axios'
+import firebase from 'firebase'
 export default {
   name: 'DashboardPage',
   components: {
@@ -141,6 +142,15 @@ export default {
     showSnack (message) {
       this.snackMessage.message = message
       this.snackMessage.activate = true
+    },
+    deleteAccount () {
+      let confirmed = confirm('Are you sure you want to delete your account? This action cannot be undone...')
+      if (confirmed) {
+        firebase.auth().currentUser.delete().then(result => {
+          // Remove db entries for the user
+        })
+        this.$router.push('/')
+      }
     }
   }
 }
