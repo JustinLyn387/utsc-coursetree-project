@@ -1,7 +1,9 @@
 node_modules/
 .vscode
 venv/
-dist/
+<<<<<<< HEAD
+=======
+>>>>>>> 8ff15572115f2199dda5e2e49c42870a90796588
 *.pic
 .env
 .jscramblerrc
