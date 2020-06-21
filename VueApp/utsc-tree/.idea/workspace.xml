@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c803d8d9-1efe-4b88-a6d8-ec8859f8d68a" name="Default Changelist" comment="Pretty much finished directory stuff moving on to treeview and login">
-      <change beforePath="$PROJECT_DIR$/../../UtscCourses.db" beforeDir="false" afterPath="$PROJECT_DIR$/../../UtscCourses.db" afterDir="false" />
-    </list>
+    <list default="true" id="c803d8d9-1efe-4b88-a6d8-ec8859f8d68a" name="Default Changelist" comment="Pretty much finished directory stuff moving on to treeview and login" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,7 +71,7 @@
       <workItem from="1590188302734" duration="1636000" />
       <workItem from="1590200960612" duration="32155000" />
       <workItem from="1590370134245" duration="6914000" />
-      <workItem from="1592757450963" duration="2584000" />
+      <workItem from="1592757450963" duration="2971000" />
     </task>
     <servers />
   </component>
